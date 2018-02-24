@@ -81,7 +81,7 @@ class ActionScene {
             this.mLayers[layerName].renderCommands = commands;
         }
         else {
-            throw new Error( `No layer with the name ${layerNamea} exists. Render commands not added.` );
+            throw new Error( `No layer with the name ${layerName} exists. Render commands not added.` );
         }
     }
 
