@@ -1,4 +1,15 @@
 body {
+    margin: 0;
+    padding: 0;
+    width: 100vw;
+    height: 100vh;
     background: #343434;
     overflow: hidden;
+    text-align: center;
+}
+
+canvas#game {
+    border: 4px ridge orange;
+    margin: 50px auto;
+    background: #000;
 }
