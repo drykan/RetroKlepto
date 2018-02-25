@@ -21,12 +21,18 @@ export default {
 
     keys: [],
 
+    /**
+     * Initialize the keys
+     */
     init: function() {
         for( let i = 0; i < 256; ++i ) {
             this.keys[i] = { cur: this.UP, last: this.UP };
         }
     },
 
+    /**
+     * Update the keys
+     */
     update: function() {
         this.keys.map( (key) => {
             if( key.last == this.JUST_PRESSED && key.cur == this.JUST_PRESSED ) {
@@ -40,6 +46,9 @@ export default {
         })
     },
 
+    /**
+     * Handle key down events
+     */
     handleKeyDown: function( event ) {
         var keyObj = this.keys[event.keyCode];
         if( keyObj.cur == this.UP ) {
@@ -50,6 +59,9 @@ export default {
         }
     },
 
+    /**
+     * Handle key up events
+     */
     handleKeyUp: function( event ) {
         var keyObj = this.keys[event.keyCode];
         if( keyObj.cur > this.UP ) {
@@ -60,23 +72,41 @@ export default {
         }
     },
 
+    /**
+     * @param {string} key - The key to check
+     * @returns True if the key is pressed down, false otherwise
+     */
     isKeyDown: function( key ) {
         let checkKey = this.keys[ this[key] ];
         return ( checkKey.cur == this.DOWN || checkKey.cur == this.JUST_PRESSED );
     },
 
+    /**
+     * @param {string} key - The key to check
+     * @returns True if the key is was JUST pressed down, false otherwise
+     */
     justPressed: function( key ) {
         return (this.keys[ this[key] ].cur == this.JUST_PRESSED);
     },
 
+    /**
+     * @param {string} key - The key to check
+     * @returns True if the key was JUST released, false otherwise
+     */
     justReleased: function( key ) {
         return (this.keys[ this[key] ].cur == this.JUST_RELEASED);
     },
 
+    /**
+     * Get the key code for the passed in key
+     */
     getKeyCode: function( key ) {
         return this[key];
     },
 
+    /**
+     * @returns {Boolean} True if any key is pressed
+     */
     any: function() {
         var result = false;
         var i = -1;
@@ -89,6 +119,9 @@ export default {
         return result;
     },
 
+    /**
+     * Reset the keys to their initial states
+     */
     reset: function() {
         this.init();
     }
