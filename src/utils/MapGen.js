@@ -111,8 +111,10 @@ class Leaf {
     }
 
     createHall( left, right ) {
-        let point1 = { x: Random.range( left.left + 1, left.right - 2 ), y: Random.range( left.top + 1, left.bottom - 2 ) };
-        let point2 = { x: Random.range( right.left + 1, right.right - 2 ), y: Random.range( right.top + 1, right.bottom - 2 ) };
+        const MIN = 3;
+
+        let point1 = { x: Random.range( left.left + 1, left.right - MIN ), y: Random.range( left.top + 1, left.bottom - MIN ) };
+        let point2 = { x: Random.range( right.left + 1, right.right - MIN ), y: Random.range( right.top + 1, right.bottom - MIN ) };
 
         let w = point2.x - point1.x;
         let h = point2.y - point1.y;
@@ -120,65 +122,65 @@ class Leaf {
         if( w < 0 ) {
             if( h < 0 ) {
                 if( Math.random() * 0.5 ) {
-                    this.halls.push( new Rectangle( point2.x, point1.y, Math.abs(w), 2 ) );
-                    this.halls.push( new Rectangle( point2.x, point2.y, 2, Math.abs(h) )  );
+                    this.halls.push( new Rectangle( point2.x, point1.y, Math.abs(w), MIN ) );
+                    this.halls.push( new Rectangle( point2.x, point2.y, MIN, Math.abs(h) )  );
                 }
                 else {
-                    this.halls.push( new Rectangle( point2.x, point2.y, Math.abs(w), 2) );
-					this.halls.push( new Rectangle( point1.x, point2.y, 2, Math.abs(h) ) );
+                    this.halls.push( new Rectangle( point2.x, point2.y, Math.abs(w), MIN) );
+					this.halls.push( new Rectangle( point1.x, point2.y, MIN, Math.abs(h) ) );
                 }
             }
             else if( h > 0 ) {
                 if (Math.random() * 0.5) {
-                    this.halls.push( new Rectangle( point2.x, point1.y, Math.abs(w), 2 ) );
-                    this.halls.push( new Rectangle( point2.x, point1.y, 2, Math.abs(h) ) );
+                    this.halls.push( new Rectangle( point2.x, point1.y, Math.abs(w), MIN ) );
+                    this.halls.push( new Rectangle( point2.x, point1.y, MIN, Math.abs(h) ) );
                 }
                 else {
-                    this.halls.push( new Rectangle( point2.x, point2.y, Math.abs(w), 2) );
-                    this.halls.push( new Rectangle( point1.x, point1.y, 2, Math.abs(h) ) );
+                    this.halls.push( new Rectangle( point2.x, point2.y, Math.abs(w), MIN) );
+                    this.halls.push( new Rectangle( point1.x, point1.y, MIN, Math.abs(h) ) );
                 }
             }
             else {
-                this.halls.push( new Rectangle( point2.x, point2.y, Math.abs(w), 2 ) );
+                this.halls.push( new Rectangle( point2.x, point2.y, Math.abs(w), MIN ) );
             }
         }
         else if( w > 0 ) {
             if (h < 0) {
                 if (Math.random() * 0.5)
                 {
-                    this.halls.push( new Rectangle( point1.x, point2.y, Math.abs(w), 2 ) );
-                    this.halls.push( new Rectangle( point1.x, point2.y, 2, Math.abs(h) ) );
+                    this.halls.push( new Rectangle( point1.x, point2.y, Math.abs(w), MIN ) );
+                    this.halls.push( new Rectangle( point1.x, point2.y, MIN, Math.abs(h) ) );
                 }
                 else
                 {
-                    this.halls.push( new Rectangle( point1.x, point1.y, Math.abs(w), 2 ) );
-                    this.halls.push( new Rectangle( point2.x, point2.y, 2, Math.abs(h) ) );
+                    this.halls.push( new Rectangle( point1.x, point1.y, Math.abs(w), MIN ) );
+                    this.halls.push( new Rectangle( point2.x, point2.y, MIN, Math.abs(h) ) );
                 }
             }
             else if (h > 0)
             {
                 if (Math.random() * 0.5)
                 {
-                    this.halls.push( new Rectangle( point1.x, point1.y, Math.abs(w), 2 ) );
-                    this.halls.push( new Rectangle( point2.x, point1.y, 2, Math.abs(h) ) );
+                    this.halls.push( new Rectangle( point1.x, point1.y, Math.abs(w), MIN ) );
+                    this.halls.push( new Rectangle( point2.x, point1.y, MIN, Math.abs(h) ) );
                 }
                 else
                 {
-                    this.halls.push( new Rectangle( point1.x, point2.y, Math.abs(w), 2 ) );
-                    this.halls.push( new Rectangle( point1.x, point1.y, 2, Math.abs(h) ) );
+                    this.halls.push( new Rectangle( point1.x, point2.y, Math.abs(w), MIN ) );
+                    this.halls.push( new Rectangle( point1.x, point1.y, MIN, Math.abs(h) ) );
                 }
             }
             else
             {
-                this.halls.push( new Rectangle( point1.x, point1.y, Math.abs(w), 2 ) );
+                this.halls.push( new Rectangle( point1.x, point1.y, Math.abs(w), MIN ) );
             }
         }
         else {
             if (h < 0) {
-                this.halls.push( new Rectangle(point2.x, point2.y, 2, Math.abs(h) ) );
+                this.halls.push( new Rectangle(point2.x, point2.y, MIN, Math.abs(h) ) );
             }
             else if (h > 0) {
-                this.halls.push( new Rectangle(point1.x, point1.y, 2, Math.abs(h) ) );
+                this.halls.push( new Rectangle(point1.x, point1.y, MIN, Math.abs(h) ) );
             }
         }
     }
@@ -292,7 +294,6 @@ class MapGen {
             }
         }
 
-        console.log(tileData)
         return tileData;
     }
 

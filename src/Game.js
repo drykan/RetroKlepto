@@ -1,6 +1,7 @@
 import ActionScene from './scenes/ActionScene';
+import Camera from './components/Camera';
 import Input from './utils/Input';
-
+import Global from './utils/Global';
 
 class Game {
     constructor( canvas, scale, fps ) {
@@ -17,16 +18,21 @@ class Game {
         this.ctx = canvas.getContext('2d');
         this.lostFocus = false;
         this.scene = null;
-
+        
         this.loop = this.loop.bind(this);
 
         this.ctx.scale( scale, scale );
+
+        Global.game = this;
     }
 
     /**
      * Initialize the game
      */
     init() {
+        this.camera = new Camera( 0, 0, this.gameWidth, this.gameHeight );
+        Global.camera = this.camera;
+
         this.scene = new ActionScene();
 
         Input.init();
@@ -108,6 +114,7 @@ class Game {
     update( elapsed ) {
         Input.update();
         this.scene.update( elapsed );
+        this.camera.update( elapsed );
     }
 
     /**
@@ -116,22 +123,7 @@ class Game {
     render() {
         const { ctx, width, height, scene } = this;
         ctx.clearRect( 0, 0, width, height );
-        scene.Layers.map( ( layer, layerIndex ) => {
-            if( layer.renderCommands ) {
-                let startCmd = layer.renderCommands[0];
-                ctx[startCmd.cmd] = startCmd.value;
-            }
-
-            layer.sprites.map( (sprite) => {
-                ctx.drawImage( sprite.image, sprite.x, sprite.y, sprite.fWidth, sprite.fHeight );
-            })
-
-            if( layer.renderCommands ) {
-                let endCmd = layer.renderCommands[1];
-                ctx[endCmd.cmd] = endCmd.value;
-            }
-
-        })
+        scene.render( ctx );
     }
 
     // Getters
