@@ -10,6 +10,8 @@ class Sprite {
         this.frameWidth = frameWidth;
         this.frameHeight = frameHeight;
         this.mStaticPosition = false;
+        this.mVelocity = { x: 0, y: 0 };
+        this.mMaxVelocity = { x: 100, y: 100};
         this.position = {
             x: (xPos || 0),
             y: (yPos || 0)
@@ -47,6 +49,9 @@ class Sprite {
                 }
             }
         }
+
+        this.x += this.xVelocity * elapsed;
+        this.y += this.yVelocity * elapsed;
     }
 
     render( canvasCtx ) {
@@ -72,12 +77,26 @@ class Sprite {
     get fWidth() { return this.frameWidth; }
     get fHeight() { return this.frameHeight; }
     get staticPosition() { return this.mStaticPosition; }
+    get xVelocity() { return this.mVelocity.x; }
+    get yVelocity() { return this.mVelocity.y; }
+    get maxVelocityX() { return this.mMaxVelocity.x; }
+    get maxVelocityY() { return this.mMaxVelocity.y; }
 
     // Setters
     set x( value ) { this.position.x = value; }
     set y( value ) { this.position.y = value; }
     set centered( value ) { this.mCentered = value; }
     set staticPosition( value ) { this.mStaticPosition = value; }
+    set xVelocity( value ) { 
+        if( value < this.maxVelocityX )
+            this.mVelocity.x = value;
+    }
+    set yVelocity( value ) { 
+        if( value < this.maxVelocityY )
+            this.mVelocity.y = value; 
+    }
+    set maxVelocityX( value ) { this.mMaxVelocity.x = value; }
+    set maxVelocityY( value ) { this.mMaxVelocity.y = value; }
 }
 
 export default Sprite;

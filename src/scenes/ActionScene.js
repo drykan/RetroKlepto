@@ -2,18 +2,17 @@
 import overlay from '../img/black.jpg';
 import light from '../img/light.png';
 import tileImg from '../img/mapTiles.jpg';
-import playerImg from '../img/playerSprite.png';
 
 // class imports
 import Input from '../utils/Input';
 import Global from '../utils/Global';
 import MapGen from '../utils/MapGen';
+import Player from '../entities/Player';
 import Sprite from '../entities/Sprite';
 import Tilemap from '../components/Tilemap';
 
 class ActionScene {
     constructor() {
-
 
         this.mLayers = {};
         this.mInitialized = false;
@@ -21,9 +20,7 @@ class ActionScene {
         this.light = new Sprite(light, this.lightSize, this.lightSize, this.lightSize, this.lightSize, false, 50, 50);        
         this.mapGenerator = new MapGen();
         this.currentMap = null;
-        this.player = new Sprite( playerImg, 24, 24, 24, 24, true, 0, 0 );
-        this.player.addAnimation( "idle", [0], 0 );
-        this.player.addAnimation( "walk", [0,1], 200 );
+        this.player = new Player();
     }
 
     init() {
@@ -34,13 +31,12 @@ class ActionScene {
         this.addLayer("map");
         this.addToLayer( "map", this.currentMap );
 
+        this.player.init();
         let startStuff = this.mapGenerator.getStartRoomAndPos();
-
         this.player.x = startStuff.pos.x * 16;
         this.player.y = startStuff.pos.y * 16;
         this.addLayer("player");        
-        this.addToLayer("player", this.player )
-        this.player.playAnimation("idle");
+        this.addToLayer("player", this.player );
         Global.camera.follow( this.player );
 
         /* */
@@ -67,33 +63,7 @@ class ActionScene {
         })
 
         this.light.x = this.player.x - (this.lightSize * 0.5);
-        this.light.y = this.player.y - (this.lightSize * 0.5);
-        let isPlayerMoving = false;
-
-        if( Input.isKeyDown( "A" ) || Input.isKeyDown( "LEFT" ) ) {
-            this.player.x -= 0.5;
-            isPlayerMoving = true;
-        }
-        else if( Input.isKeyDown( "D" ) || Input.isKeyDown( "RIGHT" ) ) {
-            this.player.x += 0.5;
-            isPlayerMoving = true;
-        }
-
-        if( Input.isKeyDown( "W" ) || Input.isKeyDown( "UP" ) ) {
-            this.player.y -= 0.5;
-            isPlayerMoving = true;
-        }
-        else if( Input.isKeyDown( "S" ) || Input.isKeyDown( "DOWN" ) ) {
-            this.player.y += 0.5;
-            isPlayerMoving = true;
-        }
-
-        if( isPlayerMoving == true ) {
-            this.player.playAnimation("walk");
-        }
-        else {
-            this.player.playAnimation("idle");
-        }
+        this.light.y = this.player.y - (this.lightSize * 0.5);        
     }
 
     render( canvasCtx ) {
