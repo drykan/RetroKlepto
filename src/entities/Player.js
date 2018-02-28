@@ -5,8 +5,8 @@ import Sprite from './Sprite';
 import playerImg from '../img/playerSprite.png';
 
 class Player extends Sprite {
-    constructor() {
-        super( playerImg, 24, 24, 24, 24, true, 0, 0 );
+    constructor( xPos, yPos ) {
+        super( playerImg, 24, 24, 24, 24, true, xPos, yPos );
         this.speed = 0.045;
     }
 

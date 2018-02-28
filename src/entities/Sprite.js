@@ -1,4 +1,5 @@
 import Global from '../utils/Global';
+import Rectangle from '../utils/Rectangle';
 
 class Sprite {
     constructor( spriteImg, width, height, frameWidth, frameHeight, isAnimated, xPos, yPos ) {
@@ -11,11 +12,14 @@ class Sprite {
         this.frameHeight = frameHeight;
         this.mStaticPosition = false;
         this.mVelocity = { x: 0, y: 0 };
-        this.mMaxVelocity = { x: 100, y: 100};
+        this.mMaxVelocity = { x: 100, y: 100};        
         this.position = {
             x: (xPos || 0),
             y: (yPos || 0)
         };
+        this.safePos = { x: this.position.x, y: this.position.y };
+        this.lastPosition = this.position;
+        this.mBounds = new Rectangle( this.x, this.y, this.fWidth, this.fHeight );
     }
 
     addAnimation( name, frames, speed ) {
@@ -50,8 +54,12 @@ class Sprite {
             }
         }
 
+        this.lastPosition.x = this.x;
+        this.lastPosition.y = this.y;
         this.x += this.xVelocity * elapsed;
         this.y += this.yVelocity * elapsed;
+        this.mBounds.x = this.x;
+        this.mBounds.y = this.y;
     }
 
     render( canvasCtx ) {
@@ -70,9 +78,15 @@ class Sprite {
         }
     }
 
+    toString() {
+        return "Sprite";
+    }
+
     // Getters
     get x() { return this.position.x; }
     get y() { return this.position.y; }
+    get lastX() { return this.lastPosition.x; }
+    get lastY() { return this.lastPosition.y; }
     get image() { return this.mImage; }
     get fWidth() { return this.frameWidth; }
     get fHeight() { return this.frameHeight; }
@@ -81,6 +95,7 @@ class Sprite {
     get yVelocity() { return this.mVelocity.y; }
     get maxVelocityX() { return this.mMaxVelocity.x; }
     get maxVelocityY() { return this.mMaxVelocity.y; }
+    get bounds() { return this.mBounds }
 
     // Setters
     set x( value ) { this.position.x = value; }

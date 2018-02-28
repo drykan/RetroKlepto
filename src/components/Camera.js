@@ -35,6 +35,8 @@ class Camera {
 
     get xOffset() { return this.mXOffset; }
     get yOffset() { return this.mYOffset; }
+    get viewWidth() { return this.width; }
+    get viewHeight() { return this.height; }
 
     set xOffset(value) { this.mXOffset = value; }
     set yOffset(value) { this.mYOffset = value; }

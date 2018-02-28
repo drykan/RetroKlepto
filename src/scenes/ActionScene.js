@@ -8,6 +8,7 @@ import Input from '../utils/Input';
 import Global from '../utils/Global';
 import MapGen from '../utils/MapGen';
 import Player from '../entities/Player';
+import Rectangle from '../utils/Rectangle';
 import Sprite from '../entities/Sprite';
 import Tilemap from '../components/Tilemap';
 
@@ -31,13 +32,14 @@ class ActionScene {
         this.addLayer("map");
         this.addToLayer( "map", this.currentMap );
 
-        this.player.init();
         let startStuff = this.mapGenerator.getStartRoomAndPos();
-        this.player.x = startStuff.pos.x * 16;
-        this.player.y = startStuff.pos.y * 16;
+        this.player = new Player( startStuff.pos.x * 16, startStuff.pos.y * 16);
+        this.player.init();
         this.addLayer("player");        
         this.addToLayer("player", this.player );
         Global.camera.follow( this.player );
+
+        this.addLayer("enemies");
 
         /* */
         let blackOverlay = new Sprite(overlay, 320, 240, 320, 240, false, 0, 0);
@@ -56,6 +58,16 @@ class ActionScene {
     }
 
     update( elapsed ) {
+        
+        if( this.currentMap.collides( this.player ) ) {
+            this.player.x = this.player.safePos.x;
+            this.player.y = this.player.safePos.y;
+        }
+        else {
+            this.player.safePos.x = this.player.x;
+            this.player.safePos.y = this.player.y;
+        }
+
         this.Layers.map( (layer) => {
             layer.renderables.map( (renderable) => {
                 renderable.update( elapsed );
@@ -65,6 +77,7 @@ class ActionScene {
         this.light.x = this.player.x - (this.lightSize * 0.5);
         this.light.y = this.player.y - (this.lightSize * 0.5);        
     }
+
 
     render( canvasCtx ) {
         this.Layers.map( (layer) => {

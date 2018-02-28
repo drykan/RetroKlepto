@@ -1,4 +1,5 @@
 import Global from '../utils/Global';
+import Rectangle from '../utils/Rectangle';
 
 class Tilemap {
     constructor( tileImg, tileWidth, tileHeight, mapData ) {
@@ -8,6 +9,17 @@ class Tilemap {
         this.tileHeight = tileHeight;
         this.mapData = mapData;
         this.position = { x: 0, y: 0};
+
+        this.colTiles = [];
+        let curRow = null;
+        for( let r = 0; r < mapData.length; ++r ) {
+            curRow = mapData[r];
+            for( let c = 0, len = curRow.length; c < len; ++c ) {
+                if( curRow[c] == 0 ) {
+                    this.colTiles.push( new Rectangle( c * tileWidth, r * tileHeight, tileWidth, tileHeight ) );
+                }
+            }
+        }
     }
 
     update(elapsed) {
@@ -29,6 +41,30 @@ class Tilemap {
                                 drawX, drawY, tileWidth, tileHeight );
             }
         }
+    }
+
+    collides( sprite ) {
+        if( sprite.toString() != "Sprite" ) {
+            throw new Error( "Checking collision on invalid type. Type Sprite expected, got " + typeof sprite );
+        }
+
+        let result = false;
+        let bounds = sprite.bounds;
+        let count = 0;
+        let limit = this.colTiles.length;
+        while( count < limit ) {
+            if( bounds.overlaps( this.colTiles[count] ) ) {
+                result = true;
+                count = limit;
+            }
+            ++count;
+        }
+
+        return result;
+    }
+
+    getCollisionTilesOnScreen() {
+        //return this
     }
 
     // Getters
