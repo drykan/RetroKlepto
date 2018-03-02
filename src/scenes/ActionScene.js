@@ -34,6 +34,8 @@ class ActionScene {
 
         let startStuff = this.mapGenerator.getStartRoomAndPos();
         this.player = new Player( startStuff.pos.x * 16, startStuff.pos.y * 16);
+        this.player.boundsOffsetX = 7;
+        this.player.boundsWidth = 10;
         this.player.init();
         this.addLayer("player");        
         this.addToLayer("player", this.player );
@@ -60,12 +62,8 @@ class ActionScene {
     update( elapsed ) {
         
         if( this.currentMap.collides( this.player ) ) {
-            this.player.x = this.player.safePos.x;
-            this.player.y = this.player.safePos.y;
-        }
-        else {
-            this.player.safePos.x = this.player.x;
-            this.player.safePos.y = this.player.y;
+            this.player.x = this.player.lastX;
+            this.player.y = this.player.lastY;
         }
 
         this.Layers.map( (layer) => {

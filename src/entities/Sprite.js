@@ -17,9 +17,10 @@ class Sprite {
             x: (xPos || 0),
             y: (yPos || 0)
         };
-        this.safePos = { x: this.position.x, y: this.position.y };
-        this.lastPosition = this.position;
+        this.lastPosition = { x: this.position.x, y: this.position.y };
         this.mBounds = new Rectangle( this.x, this.y, this.fWidth, this.fHeight );
+        this.mBoundsOffsetX = 0;
+        this.mBoundsOffsetY = 0;
     }
 
     addAnimation( name, frames, speed ) {
@@ -58,8 +59,8 @@ class Sprite {
         this.lastPosition.y = this.y;
         this.x += this.xVelocity * elapsed;
         this.y += this.yVelocity * elapsed;
-        this.mBounds.x = this.x;
-        this.mBounds.y = this.y;
+        this.mBounds.x = this.x + this.mBoundsOffsetX;
+        this.mBounds.y = this.y + this.mBoundsOffsetY;
     }
 
     render( canvasCtx ) {
@@ -96,7 +97,7 @@ class Sprite {
     get maxVelocityX() { return this.mMaxVelocity.x; }
     get maxVelocityY() { return this.mMaxVelocity.y; }
     get bounds() { return this.mBounds }
-
+    
     // Setters
     set x( value ) { this.position.x = value; }
     set y( value ) { this.position.y = value; }
@@ -112,6 +113,10 @@ class Sprite {
     }
     set maxVelocityX( value ) { this.mMaxVelocity.x = value; }
     set maxVelocityY( value ) { this.mMaxVelocity.y = value; }
+    set boundsOffsetX( value ) { this.mBoundsOffsetX = value; }
+    set boundsOffsetY( value ) { this.mBoundsOffsetY = value; }
+    set boundsWidth( value ) { this.bounds.width = value; }
+    set boundsHeight( value ) { this.bounds.height = value; }
 }
 
 export default Sprite;

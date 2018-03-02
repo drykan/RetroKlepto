@@ -28,6 +28,8 @@ class Rectangle {
 
     set x(value) { this.mX = value; }
     set y(value) { this.mY = value; }
+    set width(value) { this.mWidth = value; }
+    set height(value) { this.mHeight = value; }
 }
 
 export default Rectangle;
