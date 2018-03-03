@@ -1,4 +1,5 @@
 export default {
     game: null,
-    camera: null
+    camera: null,
+    playerPos: null
 }
