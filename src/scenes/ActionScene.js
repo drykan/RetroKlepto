@@ -3,8 +3,10 @@ import overlay from '../img/black.jpg';
 import light from '../img/light.png';
 import tileImg from '../img/mapTiles.jpg';
 import titleImg from '../img/title.png';
+import chestImg from '../img/chest.png';
 
 // class imports
+import Chest from '../components/Chest';
 import Input from '../utils/Input';
 import Global from '../utils/Global';
 import MapGen from '../utils/MapGen';
@@ -17,14 +19,17 @@ import Tilemap from '../components/Tilemap';
 class ActionScene {
     constructor() {
 
+        this.curFloor = 1;
+        this.playerRoom = -1;
         this.mLayers = {};
+        this.floorChests = [];
         this.mInitialized = false;
         this.lightSize = 200;
         this.light = new Sprite(light, this.lightSize, this.lightSize, this.lightSize, this.lightSize, false, 50, 50);        
         this.mapGenerator = new MapGen();
         this.currentMap = null;
         this.player = new Player();
-        this.title = new Sprite( titleImg, 480, 80, 160, 80, true, 80, 2 );
+        this.title = null;
     }
 
     init() {
@@ -35,7 +40,37 @@ class ActionScene {
         this.addLayer("map");
         this.addToLayer( "map", this.currentMap );
 
+        this.makePlayer();
+        this.makeChests();        
+        this.makeEnemies();
+        this.makeSpotlight();        
+        this.makeTitle();
+        SoundEngine.play( "music" );
+
+        this.mInitialized = true;
+    }
+
+    makeChests() {
+        this.addLayer( "chests" );
+        let maxChests = 5;
+        let numChests = Math.ceil( Math.random() * maxChests );
+        let newChest = null;
+        let startPos = null;
+        for( let i = 0; i < numChests; ++ i ) {
+            startPos = this.mapGenerator.getStartRoomAndPos().pos;
+            newChest = new Chest( startPos.x * 16, startPos.y * 16 );
+            this.floorChests.push(newChest);
+            this.addToLayer( "chests", newChest );
+        }
+    }
+
+    makeEnemies() {
+        this.addLayer("enemies");
+    }
+
+    makePlayer() {
         let startStuff = this.mapGenerator.getStartRoomAndPos();
+        this.playerRoom = startStuff.room;
         this.player = new Player( startStuff.pos.x * 16, startStuff.pos.y * 16);
         this.player.boundsOffsetX = 7;
         this.player.boundsWidth = 10;
@@ -43,10 +78,9 @@ class ActionScene {
         this.addLayer("player");        
         this.addToLayer("player", this.player );
         Global.camera.follow( this.player );
+    }
 
-        this.addLayer("enemies");
-
-        /* */
+    makeSpotlight() {
         let blackOverlay = new Sprite(overlay, 320, 240, 320, 240, false, 0, 0);
         blackOverlay.staticPosition = true;
 
@@ -57,16 +91,30 @@ class ActionScene {
             { cmd: "globalCompositeOperation", value: "destination-in" },
             { cmd: "globalCompositeOperation", value: "normal" }
         ]);
+    }
 
+    makeTitle() {
+        this.title = new Sprite( titleImg, 480, 80, 160, 80, true, 80, 2 );
         this.title.staticPosition = true;
         this.title.addAnimation( "pulse", [0,1,2,1], 250 );
         this.addLayer( "title" );
         this.addToLayer( "title", this.title );
         this.title.playAnimation("pulse");
-        
-        SoundEngine.play( "music" );
+    }
 
-        this.mInitialized = true;
+    checkCollisions() {
+        if( this.currentMap.collides( this.player ) ) {
+            this.player.x = this.player.lastX;
+            this.player.y = this.player.lastY;
+        }
+    }
+
+    checkChestClicks() {
+        this.floorChests.map( (chest) => {
+            if( chest.isOpen != true ) {
+                chest.isUnderPoint( Input.mouseClick );
+            }
+        });
     }
 
     update( elapsed ) {
@@ -75,10 +123,7 @@ class ActionScene {
             this.title.fade( 1.5, false, this.onTitleFadeOutComplete.bind(this) );
         }
 
-        if( this.currentMap.collides( this.player ) ) {
-            this.player.x = this.player.lastX;
-            this.player.y = this.player.lastY;
-        }
+        this.checkCollisions();
 
         this.Layers.map( (layer) => {
             layer.renderables.map( (renderable) => {
@@ -87,7 +132,7 @@ class ActionScene {
         })
 
         if( Input.mouseJustPressed( "LEFT_MOUSE" ) ) {
-            console.log( Input.mouseClick );
+            this.checkChestClicks();
         }
 
         this.light.x = this.player.x - (this.lightSize * 0.5);

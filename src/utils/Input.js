@@ -80,8 +80,8 @@ export default {
      */
     handleMouseDown( event ) {
         let btn = this.mouse[event.button];
-        this.mouseClick.x = event.offsetX;
-        this.mouseClick.y = event.offsetY;
+        this.mouseClick.x = event.offsetX * 0.5; // cut in half because our game is scaled by 2
+        this.mouseClick.y = event.offsetY * 0.5;
         if( btn.cur == this.UP ){
             btn.cur = this.JUST_PRESSED;
         }

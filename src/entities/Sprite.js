@@ -19,6 +19,7 @@ class Sprite {
             y: (yPos || 0)
         };
         this.lastPosition = { x: this.position.x, y: this.position.y };
+        this.screenPosition = { x: this.position.x - Global.camera.xOffset, y: this.position.y - Global.camera.yOffset };
         this.mBounds = new Rectangle( this.x, this.y, this.fWidth, this.fHeight );
         this.mBoundsOffsetX = 0;
         this.mBoundsOffsetY = 0;
@@ -65,6 +66,8 @@ class Sprite {
         this.y += this.yVelocity * elapsed;
         this.mBounds.x = this.x + this.mBoundsOffsetX;
         this.mBounds.y = this.y + this.mBoundsOffsetY;
+        this.screenPosition.x = this.x - Global.camera.xOffset;
+        this.screenPosition.y = this.y - Global.camera.yOffset;
 
         if( this.fadeTimer < this.fadeTarget ) {
             this.fadeTimer += elapsed;
@@ -92,10 +95,10 @@ class Sprite {
             if( this.currentAnimationName != "" ) {
                 let curAnim = this.animations[ this.currentAnimationName ];
                 canvasCtx.drawImage( this.image, curAnim.frames[curAnim.currentFrame] * this.fWidth, 0, this.frameWidth, this.frameHeight, 
-                                this.x - Global.camera.xOffset, this.y - Global.camera.yOffset, this.fWidth, this.fHeight );
+                                this.screenPosition.x, this.screenPosition.y, this.fWidth, this.fHeight );
             }
             else {
-                canvasCtx.drawImage( this.image, this.x - Global.camera.xOffset, this.y - Global.camera.yOffset, this.fWidth, this.fHeight );
+                canvasCtx.drawImage( this.image, this.screenPosition.x, this.screenPosition.y, this.fWidth, this.fHeight );
             }
         }
         else {
@@ -129,6 +132,10 @@ class Sprite {
         }
 
         return result;
+    }
+
+    getScreenPos() {
+        return this.screenPosition;
     }
 
     toString() {
