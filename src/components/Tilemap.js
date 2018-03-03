@@ -21,8 +21,6 @@ class Tilemap {
                 }
             }
         }
-
-        console.log( this.colTiles);
     }
 
     update(elapsed) {
