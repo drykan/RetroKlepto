@@ -1,0 +1,8 @@
+{
+    "sounds": {
+        "music": {
+            "file": "./audio/test.mp3",
+            "loop": false
+        }
+    }
+}

@@ -10,6 +10,7 @@ import Global from '../utils/Global';
 import MapGen from '../utils/MapGen';
 import Player from '../entities/Player';
 import Rectangle from '../utils/Rectangle';
+import SoundEngine from '../utils/SoundEngine';
 import Sprite from '../entities/Sprite';
 import Tilemap from '../components/Tilemap';
 
@@ -63,6 +64,7 @@ class ActionScene {
         this.addToLayer( "title", this.title );
         this.title.playAnimation("pulse");
         
+        SoundEngine.play( "music" );
 
         this.mInitialized = true;
     }

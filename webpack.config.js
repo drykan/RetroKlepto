@@ -40,6 +40,10 @@ module.exports = {
     plugins: [
         htmlWebpackPluginConfig,
         extractCss,
-        new CopyWebpackPlugin( [{ from: './src/img', to: './img/'}, { from: './src/data', to: './data/' }] )
+        new CopyWebpackPlugin( [
+            { from: './src/img', to: './img/'}, 
+            { from: './src/data', to: './data/' },
+            { from: './src/audio', to: './audio/' }
+        ] )
     ]
 };

@@ -1,7 +1,11 @@
 import ActionScene from './scenes/ActionScene';
+import SoundEngine from './utils/SoundEngine';
 import Camera from './components/Camera';
 import Input from './utils/Input';
 import Global from './utils/Global';
+
+// data imports
+import SoundData from './data/AudioData.json';
 
 class Game {
     constructor( canvas, scale, fps ) {
@@ -33,9 +37,10 @@ class Game {
         this.camera = new Camera( 0, 0, this.gameWidth, this.gameHeight );
         Global.camera = this.camera;
 
-        this.scene = new ActionScene();
-
         Input.init();
+        SoundEngine.init( SoundData );
+
+        this.scene = new ActionScene();       
 
         window.addEventListener( 'click', (event) => {
             this.lostFocus = event.target.id != "game";
