@@ -21,6 +21,13 @@ export default {
 
     keys: [],
 
+    // mouse buttons
+    LEFT_MOUSE: 0,
+    MIDDLE_MOUSE: 1,
+    RIGHT_MOUSE: 2,
+    mouse: [],
+    mouseClick: { x: -1, y: -1 },
+
     /**
      * Initialize the keys
      */
@@ -28,10 +35,14 @@ export default {
         for( let i = 0; i < 256; ++i ) {
             this.keys[i] = { cur: this.UP, last: this.UP };
         }
+
+        for( let j = 0; j < 3; ++j ) {
+            this.mouse[j] = { cur: this.UP, last: this.UP };
+        }
     },
 
     /**
-     * Update the keys
+     * Update the keys and mouse
      */
     update: function() {
         this.keys.map( (key) => {
@@ -43,7 +54,53 @@ export default {
             }
 
             key.last = key.cur;
-        })
+        });
+
+        this.mouse.map( (btn) => {
+            if( btn.last == this.JUST_PRESSED && btn.cur == this.JUST_PRESSED ) {
+                btn.cur = this.DOWN;
+            }
+            else if( btn.last == this.JUST_RELEASED && btn.cur == this.JUST_RELEASED ) {
+                btn.cur = this.UP;
+            }
+
+            btn.last = btn.cur;
+        });
+    },
+
+    /**
+     * Don't do anything, we use mouse down/up
+     */
+    handleMouseClick( event ) {
+
+    },
+
+    /**
+     * Handle mouse down events
+     */
+    handleMouseDown( event ) {
+        let btn = this.mouse[event.button];
+        this.mouseClick.x = event.offsetX;
+        this.mouseClick.y = event.offsetY;
+        if( btn.cur == this.UP ){
+            btn.cur = this.JUST_PRESSED;
+        }
+        else {
+            btn.cur = this.DOWN;
+        }
+    },
+
+    /**
+     * Handle mouse up events
+     */
+    handleMouseUp( event ) {
+        let btn = this.mouse[ event.button ];
+        if( btn.cur > this.UP ) {
+            btn.cur = this.JUST_RELEASED;
+        }
+        else {
+            btn.cur = this.UP;
+        }
     },
 
     /**
@@ -95,6 +152,14 @@ export default {
      */
     justReleased: function( key ) {
         return (this.keys[ this[key] ].cur == this.JUST_RELEASED);
+    },
+
+    mouseJustReleased: function( btn ) {
+        return (this.mouse[ this[btn] ].cur == this.JUST_RELEASED );
+    },
+
+    mouseJustPressed: function( btn ) {
+        return (this.mouse[ this[btn] ].cur == this.JUST_PRESSED );
     },
 
     /**

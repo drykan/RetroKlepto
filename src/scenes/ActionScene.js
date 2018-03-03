@@ -86,6 +86,10 @@ class ActionScene {
             })
         })
 
+        if( Input.mouseJustPressed( "LEFT_MOUSE" ) ) {
+            console.log( Input.mouseClick );
+        }
+
         this.light.x = this.player.x - (this.lightSize * 0.5);
         this.light.y = this.player.y - (this.lightSize * 0.5);        
     }

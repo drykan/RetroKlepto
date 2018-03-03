@@ -47,6 +47,9 @@ class Game {
         });
 
         this.canvas.addEventListener( 'click', this.onMouseClick );
+        this.canvas.addEventListener( 'mousedown', this.onMouseDown );
+        this.canvas.addEventListener( 'mouseup', this.onMouseUp );
+        this.canvas.addEventListener( 'contextmenu', this.onContextMenu );
 
         // canvas element can't be focused, add key listeners to the window object
         window.addEventListener( 'keydown', this.onKeyDown );
@@ -64,7 +67,22 @@ class Game {
     }
 
     onMouseClick( event ) {
-        console.log( event );
+        event.preventDefault();
+        Input.handleMouseClick( event );
+    }
+
+    onMouseDown( event ) {
+        event.preventDefault();
+        Input.handleMouseDown( event );
+    }
+
+    onMouseUp( event ) {
+        event.preventDefault();
+        Input.handleMouseUp( event );
+    }
+
+    onContextMenu( event ) {
+        event.preventDefault();
     }
 
     /**
