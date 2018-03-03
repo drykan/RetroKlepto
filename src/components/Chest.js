@@ -1,3 +1,4 @@
+import SoundEngine from '../utils/SoundEngine';
 import Sprite from '../entities/Sprite';
 import chestImg from '../img/chest.png';
 
@@ -20,6 +21,7 @@ class Chest extends Sprite {
                     result = true;
                     this.playAnimation( "opened" );
                     this.mIsOpen = true;
+                    SoundEngine.play( "chestOpen" );
                 }
             }
         }

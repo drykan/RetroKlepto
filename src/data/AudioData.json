@@ -3,6 +3,11 @@
         "music": {
             "file": "./audio/test.mp3",
             "loop": false
+        },
+
+        "chestOpen": {
+            "file": "./audio/chime.mp3",
+            "loop": false
         }
     }
 }
