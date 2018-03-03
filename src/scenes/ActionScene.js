@@ -2,6 +2,7 @@
 import overlay from '../img/black.jpg';
 import light from '../img/light.png';
 import tileImg from '../img/mapTiles.jpg';
+import titleImg from '../img/title.png';
 
 // class imports
 import Input from '../utils/Input';
@@ -22,6 +23,7 @@ class ActionScene {
         this.mapGenerator = new MapGen();
         this.currentMap = null;
         this.player = new Player();
+        this.title = new Sprite( titleImg, 480, 80, 160, 80, true, 80, 2 );
     }
 
     init() {
@@ -54,6 +56,12 @@ class ActionScene {
             { cmd: "globalCompositeOperation", value: "destination-in" },
             { cmd: "globalCompositeOperation", value: "normal" }
         ]);
+
+        this.title.staticPosition = true;
+        this.title.addAnimation( "pulse", [0,1,2,1], 250 );
+        this.addLayer( "title" );
+        this.addToLayer( "title", this.title );
+        this.title.playAnimation("pulse");
         
 
         this.mInitialized = true;
@@ -61,6 +69,10 @@ class ActionScene {
 
     update( elapsed ) {
         
+        if( Input.any() ) {
+            this.title.fade( 1.5, false, this.onTitleFadeOutComplete.bind(this) );
+        }
+
         if( this.currentMap.collides( this.player ) ) {
             this.player.x = this.player.lastX;
             this.player.y = this.player.lastY;
@@ -121,6 +133,13 @@ class ActionScene {
         }
     }
 
+    removeLayer( name ) {
+        delete this.mLayers[ name ];
+    }
+
+    onTitleFadeOutComplete() {
+        this.removeLayer( "title" );
+    }
     // Getters
     get initialized() { return this.mInitialized; }
     get Layers() { return Object.values( this.mLayers ); }
