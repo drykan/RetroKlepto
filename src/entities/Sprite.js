@@ -12,7 +12,8 @@ class Sprite {
         this.frameHeight = frameHeight;
         this.mStaticPosition = false;
         this.mVelocity = { x: 0, y: 0 };
-        this.mMaxVelocity = { x: 100, y: 100};        
+        this.mMaxVelocity = { x: 100, y: 100};
+        this.mAlpha = 1;
         this.position = {
             x: (xPos || 0),
             y: (yPos || 0)
@@ -21,6 +22,9 @@ class Sprite {
         this.mBounds = new Rectangle( this.x, this.y, this.fWidth, this.fHeight );
         this.mBoundsOffsetX = 0;
         this.mBoundsOffsetY = 0;
+        this.fadeTimer = 0;
+        this.fadeTarget = -1;
+        this.fadeCallback = null;
     }
 
     addAnimation( name, frames, speed ) {
@@ -61,9 +65,29 @@ class Sprite {
         this.y += this.yVelocity * elapsed;
         this.mBounds.x = this.x + this.mBoundsOffsetX;
         this.mBounds.y = this.y + this.mBoundsOffsetY;
+
+        if( this.fadeTimer < this.fadeTarget ) {
+            this.fadeTimer += elapsed;
+            let percent = this.fadeTimer / this.fadeTarget;
+            if( percent < 1 ) {
+                this.alpha = 1 - percent;
+            }
+            else {
+                this.fadeTarget = -1;
+                this.fadeTimer = 0;
+                this.alpha = 0;
+                if( this.fadeCallback != null ) {
+                    this.fadeCallback();
+                }
+            }
+        }
     }
 
     render( canvasCtx ) {
+        if( this.alpha < 1 ) {
+            canvasCtx.globalAlpha = this.alpha;
+        }
+
         if( this.staticPosition != true ) {
             if( this.currentAnimationName != "" ) {
                 let curAnim = this.animations[ this.currentAnimationName ];
@@ -75,8 +99,36 @@ class Sprite {
             }
         }
         else {
-            canvasCtx.drawImage( this.image, this.x, this.y, this.fWidth, this.fHeight );
+            if( this.currentAnimationName != "" ) {
+                let curAnim = this.animations[ this.currentAnimationName ];
+                canvasCtx.drawImage( this.image, curAnim.frames[curAnim.currentFrame] * this.fWidth, 0, this.frameWidth, this.frameHeight, 
+                                this.x, this.y, this.fWidth, this.fHeight );
+            }
+            else {
+                canvasCtx.drawImage( this.image, this.x, this.y, this.fWidth, this.fHeight );
+            }
         }
+
+        canvasCtx.globalAlpha = 1;
+    }
+
+    fade( timeInSeconds, force, callback ) {
+        if( force == true || ( this.fadeTarget == -1 && this.alpha > 0 ) ) {
+            this.fadeTimer = 0;
+            this.fadeTarget = timeInSeconds * 1000;
+            this.fadeCallback = callback;
+        }
+    }
+
+    isOnScreen() {
+        let result = false;
+        if( this.x + this.fWidth > Global.camera.xOffset && this.x < (Global.camera.xOffset + Global.camera.viewWidth) ) {
+            if( this.y + this.fHeight > Global.camera.yOffset && this.y < (Global.camera.yOffset + Global.camera.viewHeight ) ) {
+                result = true;
+            }
+        }
+
+        return result;
     }
 
     toString() {
@@ -96,7 +148,8 @@ class Sprite {
     get yVelocity() { return this.mVelocity.y; }
     get maxVelocityX() { return this.mMaxVelocity.x; }
     get maxVelocityY() { return this.mMaxVelocity.y; }
-    get bounds() { return this.mBounds }
+    get bounds() { return this.mBounds; }
+    get alpha() { return this.mAlpha; }
     
     // Setters
     set x( value ) { this.position.x = value; }
@@ -117,6 +170,7 @@ class Sprite {
     set boundsOffsetY( value ) { this.mBoundsOffsetY = value; }
     set boundsWidth( value ) { this.bounds.width = value; }
     set boundsHeight( value ) { this.bounds.height = value; }
+    set alpha( value ) { this.mAlpha = value; }
 }
 
 export default Sprite;
