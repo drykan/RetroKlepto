@@ -1,3 +1,5 @@
+import Rectangle from '../utils/Rectangle';
+
 class Camera {
     constructor( xOffset, yOffset, width, height ) {
         this.mXOffset = xOffset;
@@ -7,6 +9,7 @@ class Camera {
         this.target = null;
         this.targetHalfWide = 0;
         this.targetHalfHi = 0;
+        this.mBounds = new Rectangle( xOffset, yOffset, width, height );
     }
 
     follow( target ) {
@@ -16,6 +19,8 @@ class Camera {
             this.targetHalfHi = target.fHeight * 0.5;
             this.xOffset = this.target.x - (this.width * 0.5) + this.targetHalfWide;
             this.yOffset = this.target.y - (this.height * 0.5) + this.targetHalfHi;
+            this.mBounds.x = this.xOffset;
+            this.mBounds.y = this.yOffset;
         }
         else {
             target = null;
@@ -30,6 +35,8 @@ class Camera {
         if( this.target ) {
             this.xOffset = this.target.x - (this.width * 0.5) + this.targetHalfWide;
             this.yOffset = this.target.y - (this.height * 0.5) + this.targetHalfHi;
+            this.mBounds.x = this.xOffset;
+            this.mBounds.y = this.yOffset;
         }
     }
 
@@ -37,6 +44,7 @@ class Camera {
     get yOffset() { return this.mYOffset; }
     get viewWidth() { return this.width; }
     get viewHeight() { return this.height; }
+    get bounds() { return this.mBounds; }
 
     set xOffset(value) { this.mXOffset = value; }
     set yOffset(value) { this.mYOffset = value; }

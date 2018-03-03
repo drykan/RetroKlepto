@@ -11,6 +11,7 @@ class Tilemap {
         this.position = { x: 0, y: 0};
 
         this.colTiles = [];
+        this.colTilesOnScreen = [];
         let curRow = null;
         for( let r = 0; r < mapData.length; ++r ) {
             curRow = mapData[r];
@@ -20,6 +21,8 @@ class Tilemap {
                 }
             }
         }
+
+        console.log( this.colTiles);
     }
 
     update(elapsed) {
@@ -48,12 +51,13 @@ class Tilemap {
             throw new Error( "Checking collision on invalid type. Type Sprite expected, got " + typeof sprite );
         }
 
+        this.colTilesOnScreen = this.getCollisionTilesOnScreen();
         let result = false;
         let bounds = sprite.bounds;
         let count = 0;
-        let limit = this.colTiles.length;
+        let limit = this.colTilesOnScreen.length;
         while( count < limit ) {
-            if( bounds.overlaps( this.colTiles[count] ) ) {
+            if( bounds.overlaps( this.colTilesOnScreen[count] ) ) {
                 result = true;
                 count = limit;
             }
@@ -64,7 +68,9 @@ class Tilemap {
     }
 
     getCollisionTilesOnScreen() {
-        //return this
+        return this.colTiles.filter( (item) => {
+            return item.overlaps( Global.camera.bounds );
+        });
     }
 
     // Getters
