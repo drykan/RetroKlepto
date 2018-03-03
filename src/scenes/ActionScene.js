@@ -9,6 +9,7 @@ import chestImg from '../img/chest.png';
 import Chest from '../components/Chest';
 import Input from '../utils/Input';
 import Global from '../utils/Global';
+import HUD from '../components/HUD';
 import MapGen from '../utils/MapGen';
 import Player from '../entities/Player';
 import Rectangle from '../utils/Rectangle';
@@ -30,6 +31,7 @@ class ActionScene {
         this.currentMap = null;
         this.player = new Player();
         this.title = null;
+        this.hud = new HUD();
     }
 
     init() {
@@ -45,6 +47,12 @@ class ActionScene {
         this.makeEnemies();
         this.makeSpotlight();        
         this.makeTitle();
+
+        this.hud.playerHealth = this.player.hp;
+        this.hud.floor = this.curFloor;
+        this.addLayer( "hud" );
+        this.addToLayer( "hud", this.hud );
+
         SoundEngine.play( "music" );
 
         this.mInitialized = true;
@@ -77,7 +85,8 @@ class ActionScene {
         this.player.init();
         this.addLayer("player");        
         this.addToLayer("player", this.player );
-        Global.camera.follow( this.player );
+        Global.playerPos = { x: this.player.x, y: this.player.y };
+        Global.camera.follow( this.player );        
     }
 
     makeSpotlight() {
@@ -107,6 +116,15 @@ class ActionScene {
             this.player.x = this.player.lastX;
             this.player.y = this.player.lastY;
         }
+
+        this.floorChests.map( (chest) => {
+            if( chest.isOnScreen() ) {
+                if( chest.bounds.overlaps( this.player.bounds ) ) {
+                    this.player.x = this.player.lastX;
+                    this.player.y = this.player.lastY;
+                }
+            }
+        });
     }
 
     checkChestClicks() {
@@ -136,7 +154,9 @@ class ActionScene {
         }
 
         this.light.x = this.player.x - (this.lightSize * 0.5);
-        this.light.y = this.player.y - (this.lightSize * 0.5);        
+        this.light.y = this.player.y - (this.lightSize * 0.5);
+        Global.playerPos.x = this.player.x;
+        Global.playerPos.y = this.player.y;
     }
 
 

@@ -2,7 +2,7 @@ import Global from '../utils/Global';
 import Rectangle from '../utils/Rectangle';
 
 class Sprite {
-    constructor( spriteImg, width, height, frameWidth, frameHeight, isAnimated, xPos, yPos ) {
+    constructor( spriteImg, width, height, frameWidth, frameHeight, isAnimated, xPos, yPos, hp ) {
         this.mImage = new Image();
         this.mImage.src = spriteImg;
         this.animations = {};
@@ -26,6 +26,9 @@ class Sprite {
         this.fadeTimer = 0;
         this.fadeTarget = -1;
         this.fadeCallback = null;
+        this.mMaxHitPoints = hp || 3; // default to 3
+        this.mHitPoints = hp || 3; 
+        this.mAlive = true;
     }
 
     addAnimation( name, frames, speed ) {
@@ -42,7 +45,7 @@ class Sprite {
         this.currentAnimationName = name;
     }
 
-    update( elapsed ) {
+    updateAnimation( elapsed ) {
         if( this.isAnimated == true && this.currentAnimationName != "" ) {
             let curAnim = this.animations[ this.currentAnimationName ];
 
@@ -59,16 +62,9 @@ class Sprite {
                 }
             }
         }
+    }
 
-        this.lastPosition.x = this.x;
-        this.lastPosition.y = this.y;
-        this.x += this.xVelocity * elapsed;
-        this.y += this.yVelocity * elapsed;
-        this.mBounds.x = this.x + this.mBoundsOffsetX;
-        this.mBounds.y = this.y + this.mBoundsOffsetY;
-        this.screenPosition.x = this.x - Global.camera.xOffset;
-        this.screenPosition.y = this.y - Global.camera.yOffset;
-
+    updateFader( elapsed ) {
         if( this.fadeTimer < this.fadeTarget ) {
             this.fadeTimer += elapsed;
             let percent = this.fadeTimer / this.fadeTarget;
@@ -86,33 +82,54 @@ class Sprite {
         }
     }
 
+    updatePosition( elapsed ) {
+        this.lastPosition.x = this.x;
+        this.lastPosition.y = this.y;
+        this.x += this.xVelocity * elapsed;
+        this.y += this.yVelocity * elapsed;
+        this.mBounds.x = this.x + this.mBoundsOffsetX;
+        this.mBounds.y = this.y + this.mBoundsOffsetY;
+        this.screenPosition.x = this.x - Global.camera.xOffset;
+        this.screenPosition.y = this.y - Global.camera.yOffset;
+    }
+
+    update( elapsed ) {
+        if( this.mAlive == true ) {
+            this.updateAnimation( elapsed );        
+            this.updatePosition( elapsed );
+            this.updateFader( elapsed );
+        }
+    }
+
     render( canvasCtx ) {
-        if( this.alpha < 1 ) {
-            canvasCtx.globalAlpha = this.alpha;
-        }
+        if( this.mAlive == true ) {
+            if( this.alpha < 1 ) {
+                canvasCtx.globalAlpha = this.alpha;
+            }
 
-        if( this.staticPosition != true ) {
-            if( this.currentAnimationName != "" ) {
-                let curAnim = this.animations[ this.currentAnimationName ];
-                canvasCtx.drawImage( this.image, curAnim.frames[curAnim.currentFrame] * this.fWidth, 0, this.frameWidth, this.frameHeight, 
-                                this.screenPosition.x, this.screenPosition.y, this.fWidth, this.fHeight );
+            if( this.staticPosition != true ) {
+                if( this.currentAnimationName != "" ) {
+                    let curAnim = this.animations[ this.currentAnimationName ];
+                    canvasCtx.drawImage( this.image, curAnim.frames[curAnim.currentFrame] * this.fWidth, 0, this.frameWidth, this.frameHeight, 
+                                    this.screenPosition.x, this.screenPosition.y, this.fWidth, this.fHeight );
+                }
+                else {
+                    canvasCtx.drawImage( this.image, this.screenPosition.x, this.screenPosition.y, this.fWidth, this.fHeight );
+                }
             }
             else {
-                canvasCtx.drawImage( this.image, this.screenPosition.x, this.screenPosition.y, this.fWidth, this.fHeight );
+                if( this.currentAnimationName != "" ) {
+                    let curAnim = this.animations[ this.currentAnimationName ];
+                    canvasCtx.drawImage( this.image, curAnim.frames[curAnim.currentFrame] * this.fWidth, 0, this.frameWidth, this.frameHeight, 
+                                    this.x, this.y, this.fWidth, this.fHeight );
+                }
+                else {
+                    canvasCtx.drawImage( this.image, this.x, this.y, this.fWidth, this.fHeight );
+                }
             }
-        }
-        else {
-            if( this.currentAnimationName != "" ) {
-                let curAnim = this.animations[ this.currentAnimationName ];
-                canvasCtx.drawImage( this.image, curAnim.frames[curAnim.currentFrame] * this.fWidth, 0, this.frameWidth, this.frameHeight, 
-                                this.x, this.y, this.fWidth, this.fHeight );
-            }
-            else {
-                canvasCtx.drawImage( this.image, this.x, this.y, this.fWidth, this.fHeight );
-            }
-        }
 
-        canvasCtx.globalAlpha = 1;
+            canvasCtx.globalAlpha = 1;
+        }
     }
 
     fade( timeInSeconds, force, callback ) {
@@ -142,6 +159,24 @@ class Sprite {
         return "Sprite";
     }
 
+    damage( value ) {
+        this.mHitPoints -= value;
+        if( this.mHitPoints <= 0 ){
+            this.mHitPoints = 0;
+            this.mAlive = false;
+        }
+    }
+
+    revive() {
+        this.mHitPoints = this.mMaxHitPoints;
+        this.mAlive = true;
+    }
+
+    kill() {
+        this.mHitPoints = 0;
+        this.mAlive = false;
+    }
+
     // Getters
     get x() { return this.position.x; }
     get y() { return this.position.y; }
@@ -157,6 +192,8 @@ class Sprite {
     get maxVelocityY() { return this.mMaxVelocity.y; }
     get bounds() { return this.mBounds; }
     get alpha() { return this.mAlpha; }
+    get hp() { return this.mHitPoints; }
+    get isAlive() { return this.mAlive; }
     
     // Setters
     set x( value ) { this.position.x = value; }
@@ -178,6 +215,7 @@ class Sprite {
     set boundsWidth( value ) { this.bounds.width = value; }
     set boundsHeight( value ) { this.bounds.height = value; }
     set alpha( value ) { this.mAlpha = value; }
+
 }
 
 export default Sprite;
