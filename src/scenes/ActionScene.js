@@ -18,6 +18,8 @@ import SoundEngine from '../utils/SoundEngine';
 import Sprite from '../entities/Sprite';
 import Tilemap from '../components/Tilemap';
 
+const HIT_DIST = 26;
+
 class ActionScene {
     constructor() {
 
@@ -72,6 +74,10 @@ class ActionScene {
         SoundEngine.play( "music" );
 
         this.mInitialized = true;
+    }
+
+    checkDistance( obj1, obj2 ) {
+        return Math.sqrt( Math.pow((obj2.x - obj1.x), 2) + Math.pow((obj2.y - obj1.y), 2 ) );
     }
 
     doDescend() {
@@ -188,7 +194,12 @@ class ActionScene {
     checkChestClicks() {
         this.floorChests.map( (chest) => {
             if( chest.isOpen != true ) {
-                chest.isUnderPoint( Input.mouseClick );
+                if( chest.isUnderPoint( Input.mouseClick ) ) {
+                    let dist = this.checkDistance( this.player, chest );
+                    if( dist <= HIT_DIST ) {
+                        chest.open();
+                    }
+                }
             }
         });
     }

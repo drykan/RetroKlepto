@@ -19,9 +19,6 @@ class Chest extends Sprite {
             if( this.screenPosition.x < pt.x && this.screenPosition.x + this.fWidth > pt.x ) {
                 if( this.screenPosition.y < pt.y && this.screenPosition.y + this.fHeight > pt.y ) {
                     result = true;
-                    this.playAnimation( "opened" );
-                    this.mIsOpen = true;
-                    SoundEngine.play( "chestOpen" );
                 }
             }
         }
@@ -29,6 +26,11 @@ class Chest extends Sprite {
         return result;
     }
 
+    open() {
+        this.playAnimation( "opened" );
+        this.mIsOpen = true;
+        SoundEngine.play( "chestOpen" );
+    }
     get isOpen() { return this.mIsOpen; }
 }
 
