@@ -16,7 +16,6 @@ class Player extends Sprite {
     }
 
     update( elapsed ) {
-
         if( Input.isKeyDown( "A" ) || Input.isKeyDown( "LEFT" ) ) {
             this.xVelocity = -this.speed;
         }

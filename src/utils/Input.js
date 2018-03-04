@@ -28,6 +28,8 @@ export default {
     mouse: [],
     mouseClick: { x: -1, y: -1 },
 
+    locked: false,
+
     /**
      * Initialize the keys
      */
@@ -42,9 +44,25 @@ export default {
     },
 
     /**
+     * Locks input and resets all the keys/buttons
+     */
+    lock() {
+        this.locked = true;
+        this.init();
+    },
+
+    /**
+     * Unlocks input
+     */
+    unlock() {
+        this.locked = false;
+    },
+
+    /**
      * Update the keys and mouse
      */
     update: function() {
+        if( this.locked == true ) { return }
         this.keys.map( (key) => {
             if( key.last == this.JUST_PRESSED && key.cur == this.JUST_PRESSED ) {
                 key.cur = this.DOWN;
@@ -79,6 +97,7 @@ export default {
      * Handle mouse down events
      */
     handleMouseDown( event ) {
+        if( this.locked == true ) { return }
         let btn = this.mouse[event.button];
         this.mouseClick.x = event.offsetX * 0.5; // cut in half because our game is scaled by 2
         this.mouseClick.y = event.offsetY * 0.5;
@@ -94,6 +113,7 @@ export default {
      * Handle mouse up events
      */
     handleMouseUp( event ) {
+        if( this.locked == true ) { return }
         let btn = this.mouse[ event.button ];
         if( btn.cur > this.UP ) {
             btn.cur = this.JUST_RELEASED;
@@ -107,6 +127,7 @@ export default {
      * Handle key down events
      */
     handleKeyDown: function( event ) {
+        if( this.locked == true ) { return }
         var keyObj = this.keys[event.keyCode];
         if( keyObj.cur == this.UP ) {
             keyObj.cur = this.JUST_PRESSED;
@@ -120,6 +141,7 @@ export default {
      * Handle key up events
      */
     handleKeyUp: function( event ) {
+        if( this.locked == true ) { return }
         var keyObj = this.keys[event.keyCode];
         if( keyObj.cur > this.UP ) {
             keyObj.cur = this.JUST_RELEASED;

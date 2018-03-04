@@ -8,6 +8,11 @@
         "chestOpen": {
             "file": "./audio/chime.mp3",
             "loop": false
+        },
+
+        "steps": {
+            "file": "./audio/steps.mp3",
+            "loop": false
         }
     }
 }

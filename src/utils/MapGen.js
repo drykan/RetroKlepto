@@ -196,16 +196,35 @@ class MapGen {
         scale = scale || 8;
         this.canvas = document.createElement( "canvas" );
         this.ctx = this.canvas.getContext('2d');
+        this.ctx.scale( scale, scale );
         this.rooms = [];
         this.halls = [];
         this.leaves = [];
         this.scale = scale;
     }
 
+    reset() {
+        this.rooms.map( (item) => {
+            item = null;
+        });
+
+        this.halls.map( (item) => {
+            item = null;
+        });
+
+        this.leaves.map( (item) => {
+            item = null;
+        });
+
+        this.rooms = [];
+        this.halls = [];
+        this.leaves = [];
+    }
+
     makeMap( width, height ) {
+        this.reset();
         let { rooms, halls, leaves } = this;
 
-        this.ctx.scale( this.scale, this.scale );
         this.canvas.width = width;
         this.canvas.height = height;
         this.ctx.clearRect( 0, 0, width, height );
@@ -263,7 +282,7 @@ class MapGen {
         this.rooms.push(room);
     }
 
-    getMapImageData() {
+    getMapImageData() {        
         return this.canvas.toDataURL('image/jpeg');
     }
 

@@ -3,7 +3,8 @@ import overlay from '../img/black.jpg';
 import light from '../img/light.png';
 import tileImg from '../img/mapTiles.jpg';
 import titleImg from '../img/title.png';
-import chestImg from '../img/chest.png';
+import ladderImg from '../img/ladderDown.png';
+import descendImg from '../img/descendMsg.png';
 
 // class imports
 import Chest from '../components/Chest';
@@ -32,6 +33,10 @@ class ActionScene {
         this.player = new Player();
         this.title = null;
         this.hud = new HUD();
+        this.ladder = null;
+        this.isDescending = false;
+        this.descendSprite = new Sprite( descendImg, 320, 240, 320, 240, false, 0, 0 );
+        this.descendSprite.alpha = 0;
     }
 
     init() {
@@ -43,19 +48,61 @@ class ActionScene {
         this.addToLayer( "map", this.currentMap );
 
         this.makePlayer();
-        this.makeChests();        
+        this.makeChests();
         this.makeEnemies();
-        this.makeSpotlight();        
+        this.makeSpotlight();
         this.makeTitle();
+
+        let ladderPos = this.mapGenerator.getStartRoomAndPos();
+        while( ladderPos.room == this.playerRoom ) {
+            ladderPos = this.mapGenerator.getStartRoomAndPos();
+        }
+        this.ladder = new Sprite( ladderImg, 16, 16, 16, 16, false, ladderPos.pos.x * 16, ladderPos.pos.y * 16 );
+        this.addToLayer( "map", this.ladder );
 
         this.hud.playerHealth = this.player.hp;
         this.hud.floor = this.curFloor;
         this.addLayer( "hud" );
         this.addToLayer( "hud", this.hud );
 
+        this.descendSprite.staticPosition = true;
+        this.addLayer( "descend" );
+        this.addToLayer( "descend", this.descendSprite );
+
         SoundEngine.play( "music" );
 
         this.mInitialized = true;
+    }
+
+    doDescend() {
+        this.clearLayer( "map" );
+        this.clearLayer( "chests" );
+        this.clearLayer( "enemies" );
+
+        this.floorChests = [];
+
+        let mapW = 40, mapH = 30;
+        this.mapGenerator.makeMap( mapW, mapH );
+        this.currentMap = new Tilemap( tileImg, 16, 16, this.mapGenerator.getTileData() );        
+        this.addToLayer( "map", this.currentMap );
+
+        let playerStartInfo = this.mapGenerator.getStartRoomAndPos();
+        this.playerRoom = playerStartInfo.room;
+        this.player.x = playerStartInfo.pos.x * 16;
+        this.player.y = playerStartInfo.pos.y * 16;
+
+        this.makeChests();
+        this.makeEnemies();
+
+        let ladderPos = this.mapGenerator.getStartRoomAndPos();
+        while( ladderPos.room == this.playerRoom ) {
+            ladderPos = this.mapGenerator.getStartRoomAndPos();
+        }
+        this.ladder = new Sprite( ladderImg, 16, 16, 16, 16, false, ladderPos.pos.x * 16, ladderPos.pos.y * 16 );
+        this.addToLayer( "map", this.ladder );
+
+        this.curFloor++;
+        this.hud.floor = this.curFloor;
     }
 
     makeChests() {
@@ -64,7 +111,7 @@ class ActionScene {
         let numChests = Math.ceil( Math.random() * maxChests );
         let newChest = null;
         let startPos = null;
-        for( let i = 0; i < numChests; ++ i ) {
+        for( let i = 0; i < numChests; ++i ) {
             startPos = this.mapGenerator.getStartRoomAndPos().pos;
             newChest = new Chest( startPos.x * 16, startPos.y * 16 );
             this.floorChests.push(newChest);
@@ -112,19 +159,30 @@ class ActionScene {
     }
 
     checkCollisions() {
-        if( this.currentMap.collides( this.player ) ) {
-            this.player.x = this.player.lastX;
-            this.player.y = this.player.lastY;
-        }
-
-        this.floorChests.map( (chest) => {
-            if( chest.isOnScreen() ) {
-                if( chest.bounds.overlaps( this.player.bounds ) ) {
-                    this.player.x = this.player.lastX;
-                    this.player.y = this.player.lastY;
-                }
+        if( this.isDescending != true ) {
+            if( this.currentMap.collides( this.player ) ) {
+                this.player.x = this.player.lastX;
+                this.player.y = this.player.lastY;
             }
-        });
+
+            if( this.ladder.bounds.overlaps( this.player.bounds ) ) {
+                // descend
+                this.isDescending = true;
+                Input.lock();
+                SoundEngine.play( "steps" );
+                this.descendSprite.fade( 1.5, 1, 0, true, this.onDescendFadeIn.bind(this) );
+            }
+        }
+    }
+
+    onDescendFadeIn() {
+        this.doDescend();
+        this.descendSprite.fade(1.5, 0, 1, true, this.onDescendFadeOut.bind(this) );        
+    }
+
+    onDescendFadeOut() {
+        Input.unlock();
+        this.isDescending = false;
     }
 
     checkChestClicks() {
@@ -136,9 +194,8 @@ class ActionScene {
     }
 
     update( elapsed ) {
-        
         if( Input.any() ) {
-            this.title.fade( 1.5, false, this.onTitleFadeOutComplete.bind(this) );
+            this.title.fade( 1.5, 0, 1, false, this.onTitleFadeOutComplete.bind(this) );
         }
 
         this.checkCollisions();
@@ -180,10 +237,15 @@ class ActionScene {
     }
 
     addLayer( name ) {
-        this.mLayers[name] = {
-            name,
-            renderables: []
-        };
+        if( !this.mLayers[name] ) {
+            this.mLayers[name] = {
+                name,
+                renderables: []
+            };
+        }
+        else {
+            console.log(`A layer with the name ${name} already exists. No new layer was created.`);
+        }
     }
 
     addToLayer( layerName, objectToAdd ) {
@@ -206,6 +268,18 @@ class ActionScene {
 
     removeLayer( name ) {
         delete this.mLayers[ name ];
+    }
+
+    removeFromLayer( name, obj ) {
+        this.mLayers[name].renderables = this.mLayers[name].renderables.filter( (item) => { return item == obj } );
+    }
+
+    clearLayer( name ) {
+        this.mLayers[name].renderables.map( (item) => {
+            item.destroy();
+            item = null;
+        });
+        this.mLayers[name].renderables = [];
     }
 
     onTitleFadeOutComplete() {

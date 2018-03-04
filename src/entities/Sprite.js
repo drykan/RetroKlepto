@@ -25,6 +25,7 @@ class Sprite {
         this.mBoundsOffsetY = 0;
         this.fadeTimer = 0;
         this.fadeTarget = -1;
+        this.fadeEffect = { timer: 0, timeTarget: -1, toValue: 0, fromValue: 0, difference: 0, callback: null };
         this.fadeCallback = null;
         this.mMaxHitPoints = hp || 3; // default to 3
         this.mHitPoints = hp || 3; 
@@ -65,18 +66,23 @@ class Sprite {
     }
 
     updateFader( elapsed ) {
-        if( this.fadeTimer < this.fadeTarget ) {
-            this.fadeTimer += elapsed;
-            let percent = this.fadeTimer / this.fadeTarget;
+        if( this.fadeEffect.timer < this.fadeEffect.timeTarget ) {
+            this.fadeEffect.timer += elapsed;
+            let percent = this.fadeEffect.timer / this.fadeEffect.timeTarget;
             if( percent < 1 ) {
-                this.alpha = 1 - percent;
+                if( this.fadeEffect.toValue < this.fadeEffect.fromValue ) {
+                    this.alpha = this.fadeEffect.fromValue - ( percent * this.fadeEffect.difference );
+                }
+                else {
+                    this.alpha = this.fadeEffect.fromValue + ( percent * this.fadeEffect.difference );
+                }
             }
             else {
-                this.fadeTarget = -1;
-                this.fadeTimer = 0;
-                this.alpha = 0;
-                if( this.fadeCallback != null ) {
-                    this.fadeCallback();
+                this.fadeEffect.timeTarget = -1;
+                this.fadeEffect.timer = 0;
+                this.alpha = this.fadeEffect.toValue;
+                if( this.fadeEffect.callback != null ) {
+                    this.fadeEffect.callback();
                 }
             }
         }
@@ -132,11 +138,14 @@ class Sprite {
         }
     }
 
-    fade( timeInSeconds, force, callback ) {
-        if( force == true || ( this.fadeTarget == -1 && this.alpha > 0 ) ) {
-            this.fadeTimer = 0;
-            this.fadeTarget = timeInSeconds * 1000;
-            this.fadeCallback = callback;
+    fade( timeInSeconds, toValue, fromValue, force, callback ) {
+        if( force == true || this.fadeEffect.timeTarget == -1 ) {
+            this.fadeEffect.timer = 0;
+            this.fadeEffect.timeTarget = timeInSeconds * 1000;
+            this.fadeEffect.toValue = toValue;
+            this.fadeEffect.fromValue = fromValue || this.alpha;
+            this.fadeEffect.difference = Math.abs(toValue - fromValue);
+            this.fadeEffect.callback = callback;
         }
     }
 
@@ -175,6 +184,32 @@ class Sprite {
     kill() {
         this.mHitPoints = 0;
         this.mAlive = false;
+    }
+
+    destroy() {
+        this.mImage = null;
+        this.animations = null;
+        this.currentAnimationName = null;
+        this.isAnimated = null;
+        this.frameWidth = null;
+        this.frameHeight = null;
+        this.mStaticPosition = null;
+        this.mVelocity = null;
+        this.mMaxVelocity = null;
+        this.mAlpha = null;
+        this.position = null;
+        this.lastPosition = null;
+        this.screenPosition = null;
+        this.mBounds = null;
+        this.mBoundsOffsetX = null;
+        this.mBoundsOffsetY = null;
+        this.fadeTimer = null;
+        this.fadeTarget = null;
+        this.fadeEffect = null;
+        this.fadeCallback = null;
+        this.mMaxHitPoints = null;
+        this.mHitPoints = null; 
+        this.mAlive = null;
     }
 
     // Getters

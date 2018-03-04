@@ -71,6 +71,17 @@ class Tilemap {
         });
     }
 
+    destroy() {
+        this.mImage = null;
+        this.tileWidth = null;
+        this.tileHeight = null;
+        this.mapData = null;
+        this.position = null;
+
+        this.colTiles = null;
+        this.colTilesOnScreen = null;
+    }
+
     // Getters
     get x() { return this.position.x; }
     get y() { return this.position.y; }
