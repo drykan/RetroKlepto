@@ -1,7 +1,94 @@
 {
     "games": [
         {
-            "title": "Halo"
+            "title": "Dead or Alive 2",
+            "platform": "Sega Dreamcast",
+            "rarity": 2,
+            "img": "./img/doa2.jpg"
+        },
+        {
+            "title": "Adventure",
+            "platform": "Atari 2600",
+            "rarity": 1,
+            "img": "./img/adventure.jpg"
+        },
+        {
+            "title": "Pitfall",
+            "platform": "Atari 2600",
+            "rarity": 1,
+            "img": "./img/pitfall.jpg"
+        },
+        {
+            "title": "Space Invaders",
+            "platform": "Atari 2600",
+            "rarity": 1,
+            "img": "./img/spaceinvaders.jpg"
+        },
+        {
+            "title": "Alisia Dragoon",
+            "platform": "Sega Genesis",
+            "rarity": 4,
+            "img": "./img/alisiaDragoon.jpg"
+        },
+        {
+            "title": "Rocket Knight Adventures",
+            "platform": "Sega Genesis",
+            "rarity": 3,
+            "img": "./img/rocketKnight.jpg"
+        },
+        {
+            "title": "Sonic the Hedgehog 2",
+            "platform": "Sega Genesis",
+            "rarity": 1,
+            "img": "./img/sonic2.jpg"
+        },
+        {
+            "title": "Smurf: Rescue in Gargamel's Castle",
+            "platform": "ColecoVision",
+            "rarity": 2,
+            "img": "./img/smurfs.png"
+        },
+        {
+            "title": "Double Dragon 2: The Revenge",
+            "platform": "Nintendo Entertainment System",
+            "rarity": 2,
+            "img": "./img/doubleDragon2.png"
+        },
+        {
+            "title": "The Guardian Legend",
+            "platform": "Nintendo Entertainment System",
+            "rarity": 2,
+            "img": "./img/TGL.png"
+        },
+        {
+            "title": "Bonk's Adventure",
+            "platform": "Nintendo Entertainment System",
+            "rarity": 5,
+            "img": "./img/BonksAdventure.png"
+        },
+        {
+            "title": "Mega Man",
+            "platform": "Nintendo Entertainment System",
+            "rarity": 4,
+            "img": "./img/megaMan.png"
+        },
+        {
+            "title": "Chrono Trigger",
+            "platform": "Super Nintendo Entertainment System",
+            "rarity": 4,
+            "img": "./img/chronoTrigger.png"
+        },
+        {
+            "title": "Secret of Mana",
+            "platform": "Super Nintendo Entertainment System",
+            "rarity": 3,
+            "img": "./img/secretOfMana.png"
+        },
+        {
+            "title": "Super Castlevania IV",
+            "platform": "Super Nintendo Entertainment System",
+            "rarity": 3,
+            "img": "./img/castlevania4.png"
         }
     ]
 }
