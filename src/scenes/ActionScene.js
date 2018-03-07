@@ -117,9 +117,11 @@ class ActionScene {
         let numChests = Math.ceil( Math.random() * maxChests );
         let newChest = null;
         let startPos = null;
+        let maxRarityLvl = (this.curFloor + 1 <= 5) ? this.curFloor + 1 : 5;
+
         for( let i = 0; i < numChests; ++i ) {
             startPos = this.mapGenerator.getStartRoomAndPos().pos;
-            newChest = new Chest( startPos.x * 16, startPos.y * 16 );
+            newChest = new Chest( startPos.x * 16, startPos.y * 16, maxRarityLvl );
             this.floorChests.push(newChest);
             this.addToLayer( "chests", newChest );
         }
@@ -198,6 +200,7 @@ class ActionScene {
                     let dist = this.checkDistance( this.player, chest );
                     if( dist <= HIT_DIST ) {
                         chest.open();
+                        console.log( chest.contents );
                     }
                 }
             }

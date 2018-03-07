@@ -4,91 +4,136 @@
             "title": "Dead or Alive 2",
             "platform": "Sega Dreamcast",
             "rarity": 2,
-            "img": "./img/doa2.jpg"
+            "img": "./img/doa2.jpg",
+            "release": "Feb 29, 2000",
+            "dev": "Team Ninja",
+            "pub": "Tecmo"
         },
         {
             "title": "Adventure",
             "platform": "Atari 2600",
             "rarity": 1,
-            "img": "./img/adventure.jpg"
+            "img": "./img/adventure.jpg",
+            "release": "1979",
+            "dev": "Atari",
+            "pub": "Atari"
         },
         {
             "title": "Pitfall",
             "platform": "Atari 2600",
             "rarity": 1,
-            "img": "./img/pitfall.jpg"
+            "img": "./img/pitfall.jpg",
+            "release": "Apr 20, 1982",
+            "dev": "Activision",
+            "pub": "Activision"
         },
         {
             "title": "Space Invaders",
             "platform": "Atari 2600",
             "rarity": 1,
-            "img": "./img/spaceinvaders.jpg"
+            "img": "./img/spaceinvaders.jpg",
+            "release": "1980",
+            "dev": "Atari",
+            "pub": "Atari"
         },
         {
             "title": "Alisia Dragoon",
             "platform": "Sega Genesis",
             "rarity": 4,
-            "img": "./img/alisiaDragoon.jpg"
+            "img": "./img/alisiaDragoon.jpg",
+            "release": "Mar 30, 1992",
+            "dev": "Game Arts",
+            "pub": "Sega"
         },
         {
             "title": "Rocket Knight Adventures",
             "platform": "Sega Genesis",
             "rarity": 3,
-            "img": "./img/rocketKnight.jpg"
+            "img": "./img/rocketKnight.jpg",
+            "release": "Sep 03, 1993",
+            "dev": "Konami",
+            "pub": "Konami"
         },
         {
             "title": "Sonic the Hedgehog 2",
             "platform": "Sega Genesis",
             "rarity": 1,
-            "img": "./img/sonic2.jpg"
+            "img": "./img/sonic2.jpg",
+            "release": "Nov 21, 1992",
+            "dev": "Sonic Team",
+            "pub": "Sega"
         },
         {
             "title": "Smurf: Rescue in Gargamel's Castle",
             "platform": "ColecoVision",
             "rarity": 2,
-            "img": "./img/smurfs.png"
+            "img": "./img/smurfs.png",
+            "release": "1982",
+            "dev": "Coleco",
+            "pub": "Coleco"
         },
         {
             "title": "Double Dragon 2: The Revenge",
             "platform": "Nintendo Entertainment System",
             "rarity": 2,
-            "img": "./img/doubleDragon2.png"
+            "img": "./img/doubleDragon2.png",
+            "release": "Dec 22, 1989",
+            "dev": "Technos Japan",
+            "pub": "Acclaim"
         },
         {
             "title": "The Guardian Legend",
             "platform": "Nintendo Entertainment System",
             "rarity": 2,
-            "img": "./img/TGL.png"
+            "img": "./img/TGL.png",
+            "release": "Feb 05, 1988",
+            "dev": "Compile",
+            "pub": "Broderbund"
         },
         {
             "title": "Bonk's Adventure",
             "platform": "Nintendo Entertainment System",
             "rarity": 5,
-            "img": "./img/BonksAdventure.png"
+            "img": "./img/BonksAdventure.png",
+            "release": "Jan, 1994",
+            "dev": "Atlus",
+            "pub": "Hudson Soft"
         },
         {
             "title": "Mega Man",
             "platform": "Nintendo Entertainment System",
             "rarity": 4,
-            "img": "./img/megaMan.png"
+            "img": "./img/megaMan.png",
+            "release": "Dec 17, 1987",
+            "dev": "Capcom",
+            "pub": "Capcom"
         },
         {
             "title": "Chrono Trigger",
             "platform": "Super Nintendo Entertainment System",
             "rarity": 4,
-            "img": "./img/chronoTrigger.png"
+            "img": "./img/chronoTrigger.png",
+            "release": "Mar 11, 1995",
+            "dev": "Square",
+            "pub": "Square"
         },
         {
             "title": "Secret of Mana",
             "platform": "Super Nintendo Entertainment System",
             "rarity": 3,
-            "img": "./img/secretOfMana.png"
+            "img": "./img/secretOfMana.png",
+            "release": "Aug 6, 1993",
+            "dev": "Square",
+            "pub": "Square"
         },
         {
             "title": "Super Castlevania IV",
             "platform": "Super Nintendo Entertainment System",
             "rarity": 3,
-            "img": "./img/castlevania4.png"
+            "img": "./img/castlevania4.png",
+            "release": "Dec 04, 1991",
+            "dev": "Konami",
+            "pub": "Konami"
         }
     ]
 }
