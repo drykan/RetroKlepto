@@ -17,6 +17,7 @@ import Rectangle from '../utils/Rectangle';
 import SoundEngine from '../utils/SoundEngine';
 import Sprite from '../entities/Sprite';
 import Tilemap from '../components/Tilemap';
+import LootDisplay from '../components/LootDisplay';
 
 const HIT_DIST = 26;
 
@@ -39,6 +40,7 @@ class ActionScene {
         this.isDescending = false;
         this.descendSprite = new Sprite( descendImg, 320, 240, 320, 240, false, 0, 0 );
         this.descendSprite.alpha = 0;
+        this.showingLoot = false;
     }
 
     init() {
@@ -61,6 +63,8 @@ class ActionScene {
         }
         this.ladder = new Sprite( ladderImg, 16, 16, 16, 16, false, ladderPos.pos.x * 16, ladderPos.pos.y * 16 );
         this.addToLayer( "map", this.ladder );
+
+        this.addLayer( "lootDisplay" );
 
         this.hud.playerHealth = this.player.hp;
         this.hud.floor = this.curFloor;
@@ -117,7 +121,7 @@ class ActionScene {
         let numChests = Math.ceil( Math.random() * maxChests );
         let newChest = null;
         let startPos = null;
-        let maxRarityLvl = (this.curFloor + 1 <= 5) ? this.curFloor + 1 : 5;
+        let maxRarityLvl = 5;//(this.curFloor + 2 <= 5) ? this.curFloor + 2 : 5;
 
         for( let i = 0; i < numChests; ++i ) {
             startPos = this.mapGenerator.getStartRoomAndPos().pos;
@@ -200,6 +204,10 @@ class ActionScene {
                     let dist = this.checkDistance( this.player, chest );
                     if( dist <= HIT_DIST ) {
                         chest.open();
+                        let loot = new LootDisplay();
+                        loot.Game = chest.contents;
+                        this.addToLayer( "lootDisplay", loot );
+                        this.showingLoot = true;
                         console.log( chest.contents );
                     }
                 }
@@ -222,6 +230,11 @@ class ActionScene {
 
         if( Input.mouseJustPressed( "LEFT_MOUSE" ) ) {
             this.checkChestClicks();
+        }
+
+        if( this.showingLoot && Input.isKeyDown( "SPACE" ) ) {
+            this.showingLoot = false;
+            this.clearLayer( "lootDisplay" );
         }
 
         this.light.x = this.player.x - (this.lightSize * 0.5);

@@ -13,7 +13,7 @@ class Chest extends Sprite {
         this.boundsOffsetY = 6;
         this.boundsHeight = 10;
         this.mIsOpen = false;
-        this.mContents = GameMgr.getGameByRarity( maxRarityLvl, Random.range( 0, maxRarityLvl ) );
+        this.mContents = GameMgr.getGameByRarity( Random.range( 0, maxRarityLvl ) );
     }
 
     isUnderPoint( pt ) {
