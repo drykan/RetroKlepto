@@ -219,6 +219,15 @@ class ActionScene {
         });
     }
 
+    hurtPlayer( damageValue ) {
+        this.player.damage( damageValue );
+        this.hud.playerHealth = this.player.hp;
+        if( this.player.isAlive != true ) {
+            this.gameOver = true;
+            this.player.alpha = 0;
+        }
+    }
+
     update( elapsed ) {
         if( Input.any() ) {
             this.title.fade( 1.5, 0, 1, false, this.onTitleFadeOutComplete.bind(this) );
@@ -242,11 +251,7 @@ class ActionScene {
         }
 
         if( Input.justPressed("H") ) {
-            this.player.damage(1);
-            if( this.player.isAlive != true ) {
-                this.gameOver = true;
-                this.player.alpha = 0;
-            }
+            this.hurtPlayer(1);
         }
 
         if( this.gameOver == true ) {
