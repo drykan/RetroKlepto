@@ -41,6 +41,9 @@ class ActionScene {
         this.descendSprite = new Sprite( descendImg, 320, 240, 320, 240, false, 0, 0 );
         this.descendSprite.alpha = 0;
         this.showingLoot = false;
+        this.gameOver = false;
+        this.gameOverLootDisplay = new LootDisplay();
+        this.gameOverLootDisplay.isGameOverDisplay = true;
     }
 
     init() {
@@ -206,9 +209,10 @@ class ActionScene {
                         chest.open();
                         let loot = new LootDisplay();
                         loot.Game = chest.contents;
+                        this.player.loot.push( chest.contents );
+                        this.clearLayer( "lootDisplay" );
                         this.addToLayer( "lootDisplay", loot );
                         this.showingLoot = true;
-                        console.log( chest.contents );
                     }
                 }
             }
@@ -235,6 +239,31 @@ class ActionScene {
         if( this.showingLoot && Input.isKeyDown( "SPACE" ) ) {
             this.showingLoot = false;
             this.clearLayer( "lootDisplay" );
+        }
+
+        if( Input.justPressed("H") ) {
+            this.player.damage(1);
+            if( this.player.isAlive != true ) {
+                this.gameOver = true;
+                this.player.alpha = 0;
+            }
+        }
+
+        if( this.gameOver == true ) {
+            if( this.mLayers[ "collection" ] == null ) {
+                this.addLayer( "collection" );
+                if( this.player.loot.length > 0 ) {
+                    this.gameOverLootDisplay.Game = this.player.getLootItem();
+                }
+                this.addToLayer( "collection", this.gameOverLootDisplay );
+            }
+
+            if( Input.justPressed( "RIGHT" ) ){
+                this.gameOverLootDisplay.Game = this.player.getNextLootItem();
+            }
+            else if( Input.justPressed( "LEFT" ) ){
+                this.gameOverLootDisplay.Game = this.player.getPrevLootItem();
+            }
         }
 
         this.light.x = this.player.x - (this.lightSize * 0.5);
