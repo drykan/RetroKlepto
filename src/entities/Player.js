@@ -10,11 +10,21 @@ class Player extends Sprite {
         this.speed = 0.045;
         this.loot = [];
         this.currentLootIndex = 0;
+        this.isAttacking = false;
+        this.onAttackComplete = this.onAttackComplete.bind(this);
     }
 
     init() {
         this.addAnimation( "idle", [0], 0 );
-        this.addAnimation( "walk", [0,1], 200 );
+        this.addAnimation( "walk", [0, 1], 200, true );
+        this.addAnimation( "atkR", [0, 2], 200, false, this.onAttackComplete );
+        this.addAnimation( "atkL", [0, 3], 200, false, this.onAttackComplete );
+        this.addAnimation( "atkD", [0, 4], 200, false, this.onAttackComplete );
+        this.addAnimation( "atkU", [0, 5], 200, false, this.onAttackComplete );
+    }
+
+    onAttackComplete() {
+        this.isAttacking = false;
     }
 
     getLootItem() {
@@ -64,12 +74,39 @@ class Player extends Sprite {
             else {
                 this.yVelocity = 0;
             }
+ 
+            if( Input.mouseJustPressed( "LEFT_MOUSE" ) ) {
+                // test attack
+                if( Math.abs( Math.distance( this.screenPosition, Input.mouseClick ) ) < 50 ) {
+                    let xDif = (this.screenPosition.x + this.fWidth * 0.5) - Input.mouseClick.x;
+                    let yDif = (this.screenPosition.y + this.fHeight * 0.5) - Input.mouseClick.y;
+                    let angle = Math.atan2( yDif, xDif ) * 180 / Math.PI;
 
-            if( this.xVelocity != 0 || this.yVelocity != 0 ) {
-                this.playAnimation("walk");
+                    this.isAttacking = true;
+                    if( angle >= 45 && angle <= 145 ) {
+                        this.playAnimation("atkU");
+                    }
+                    else if( angle > 145 || angle <= -137 ) {
+                        this.playAnimation("atkR");
+                    }
+                    else if( angle > -137 && angle <= -41 ) {
+                        this.playAnimation("atkD");
+                    }
+                    else {
+                        this.playAnimation("atkL");
+                    }
+
+                    //console.log('A:',angle);
+                }
             }
-            else {
-                this.playAnimation("idle");
+
+            if( !this.isAttacking ) {
+                if( this.xVelocity != 0 || this.yVelocity != 0 ) {
+                    this.playAnimation("walk");
+                }
+                else {
+                    this.playAnimation("idle");
+                }
             }
 
             super.update(elapsed);

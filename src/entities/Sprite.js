@@ -32,13 +32,18 @@ class Sprite {
         this.mAlive = true;
     }
 
-    addAnimation( name, frames, speed ) {
+    addAnimation( name, frames, speed, loop, endCallback ) {
+        if( loop == undefined ) {
+            loop = true;
+        }
         this.animations[name] = {
             name,
             speed,
             frames: frames,
             currentFrame: 0,
-            time: 0
+            time: 0,
+            loop: loop,
+            onComplete: endCallback
         };
     }
 
@@ -57,8 +62,16 @@ class Sprite {
                         ++curAnim.currentFrame;
                     }
                     else {
-                        curAnim.currentFrame = 0;
+                        if( curAnim.loop == true ) {
+                            curAnim.currentFrame = 0;
+                        }
+                        else {
+                            if( curAnim.onComplete != null ) {
+                                curAnim.onComplete();
+                            }
+                        }
                     }
+
                     curAnim.time = 0;
                 }
             }
