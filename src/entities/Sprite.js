@@ -173,6 +173,19 @@ class Sprite {
         return result;
     }
 
+    isUnderPoint( pt ) {
+        let result = false;
+        if( this.isOnScreen() ) {
+            if( this.screenPosition.x < pt.x && this.screenPosition.x + this.fWidth > pt.x ) {
+                if( this.screenPosition.y < pt.y && this.screenPosition.y + this.fHeight > pt.y ) {
+                    result = true;
+                }
+            }
+        }
+
+        return result;
+    }
+    
     getScreenPos() {
         return this.screenPosition;
     }
@@ -242,6 +255,12 @@ class Sprite {
     get alpha() { return this.mAlpha; }
     get hp() { return this.mHitPoints; }
     get isAlive() { return this.mAlive; }
+    get midPoint() { 
+        return {
+            x: this.x + this.fWidth * 0.5,
+            y: this.y + this.fHeight * 0.5
+        };
+    }
     
     // Setters
     set x( value ) { this.position.x = value; }

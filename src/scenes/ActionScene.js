@@ -18,6 +18,9 @@ import SoundEngine from '../utils/SoundEngine';
 import Sprite from '../entities/Sprite';
 import Tilemap from '../components/Tilemap';
 import LootDisplay from '../components/LootDisplay';
+import Slime from '../entities/Slime';
+import EventEngine from '../utils/EventEngine';
+import Random from '../utils/Random';
 
 const HIT_DIST = 26;
 
@@ -44,6 +47,10 @@ class ActionScene {
         this.gameOver = false;
         this.gameOverLootDisplay = new LootDisplay();
         this.gameOverLootDisplay.isGameOverDisplay = true;
+        this.floorEnemies = [];
+
+        this.hurtPlayer = this.hurtPlayer.bind(this);
+        EventEngine.on( "playerHit", this.hurtPlayer );
     }
 
     init() {
@@ -57,7 +64,7 @@ class ActionScene {
         this.makePlayer();
         this.makeChests();
         this.makeEnemies();
-        this.makeSpotlight();
+        //this.makeSpotlight();
         this.makeTitle();
 
         let ladderPos = this.mapGenerator.getStartRoomAndPos();
@@ -83,16 +90,13 @@ class ActionScene {
         this.mInitialized = true;
     }
 
-    checkDistance( obj1, obj2 ) {
-        return Math.sqrt( Math.pow((obj2.x - obj1.x), 2) + Math.pow((obj2.y - obj1.y), 2 ) );
-    }
-
     doDescend() {
         this.clearLayer( "map" );
         this.clearLayer( "chests" );
         this.clearLayer( "enemies" );
 
         this.floorChests = [];
+        this.floorEnemies = [];
 
         let mapW = 40, mapH = 30;
         this.mapGenerator.makeMap( mapW, mapH );
@@ -136,12 +140,25 @@ class ActionScene {
 
     makeEnemies() {
         this.addLayer("enemies");
+        let newEnemy = null;
+        let startInfo = this.mapGenerator.getStartRoomAndPos();
+        let limit =  Random.range( this.curFloor + 2, this.curFloor + 8 );
+        for( let i = 0; i < limit; ++i ) {
+            while( startInfo.room == this.playerRoom ) {
+                startInfo = this.mapGenerator.getStartRoomAndPos();
+            }
+
+            newEnemy = new Slime( startInfo.pos.x * 16, startInfo.pos.y * 16, 1, 3, 1200, 0.03, 1 );
+            this.addToLayer( "enemies", newEnemy );
+            this.floorEnemies.push( newEnemy );
+            startInfo = this.mapGenerator.getStartRoomAndPos();
+        }
     }
 
     makePlayer() {
         let startStuff = this.mapGenerator.getStartRoomAndPos();
         this.playerRoom = startStuff.room;
-        this.player = new Player( startStuff.pos.x * 16, startStuff.pos.y * 16);
+        this.player = new Player( startStuff.pos.x * 16, startStuff.pos.y * 16, 5);
         this.player.boundsOffsetX = 7;
         this.player.boundsWidth = 10;
         this.player.init();
@@ -180,6 +197,28 @@ class ActionScene {
                 this.player.y = this.player.lastY;
             }
 
+            this.floorEnemies.map( (enemy) => {
+                if( enemy.isOnScreen() && this.currentMap.collides( enemy ) ) {
+                    enemy.x = enemy.lastX;
+                    enemy.y = enemy.lastY;
+                }
+            });
+
+            this.floorEnemies.forEach( (enemy) => {
+                if( enemy.isAlive && enemy.isOnScreen() ) {
+                    if( enemy.isUnderPoint( Input.mouseClick ) && Input.mouseJustPressed( "LEFT_MOUSE" ) ) {
+                        let hitChance = Math.random() * 100;
+                        if( hitChance > 12 ) {
+                            enemy.damage( 1 );
+                            SoundEngine.play( "enemyHit" );
+                        }
+                        else {
+                            SoundEngine.play( "miss" );
+                        }
+                    }
+                }
+            });
+
             if( this.ladder.bounds.overlaps( this.player.bounds ) ) {
                 // descend
                 this.isDescending = true;
@@ -204,7 +243,7 @@ class ActionScene {
         this.floorChests.map( (chest) => {
             if( chest.isOpen != true ) {
                 if( chest.isUnderPoint( Input.mouseClick ) ) {
-                    let dist = this.checkDistance( this.player, chest );
+                    let dist = Math.distance( this.player.midPoint, chest.midPoint );
                     if( dist <= HIT_DIST ) {
                         chest.open();
                         let loot = new LootDisplay();
@@ -273,8 +312,9 @@ class ActionScene {
 
         this.light.x = this.player.x - (this.lightSize * 0.5);
         this.light.y = this.player.y - (this.lightSize * 0.5);
-        Global.playerPos.x = this.player.x;
-        Global.playerPos.y = this.player.y;
+        let playerMidPt = this.player.midPoint;
+        Global.playerPos.x = playerMidPt.x;
+        Global.playerPos.y = playerMidPt.y;
     }
 
 

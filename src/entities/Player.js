@@ -5,8 +5,8 @@ import Sprite from './Sprite';
 import playerImg from '../img/playerSprite.png';
 
 class Player extends Sprite {
-    constructor( xPos, yPos ) {
-        super( playerImg, 24, 24, 24, 24, true, xPos, yPos );
+    constructor( xPos, yPos, hp ) {
+        super( playerImg, 24, 24, 24, 24, true, xPos, yPos, hp );
         this.speed = 0.045;
         this.loot = [];
         this.currentLootIndex = 0;
@@ -17,10 +17,10 @@ class Player extends Sprite {
     init() {
         this.addAnimation( "idle", [0], 0 );
         this.addAnimation( "walk", [0, 1], 200, true );
-        this.addAnimation( "atkR", [0, 2], 200, false, this.onAttackComplete );
-        this.addAnimation( "atkL", [0, 3], 200, false, this.onAttackComplete );
-        this.addAnimation( "atkD", [0, 4], 200, false, this.onAttackComplete );
-        this.addAnimation( "atkU", [0, 5], 200, false, this.onAttackComplete );
+        this.addAnimation( "atkR", [0, 2], 60, false, this.onAttackComplete );
+        this.addAnimation( "atkL", [0, 3], 60, false, this.onAttackComplete );
+        this.addAnimation( "atkD", [0, 4], 60, false, this.onAttackComplete );
+        this.addAnimation( "atkU", [0, 5], 60, false, this.onAttackComplete );
     }
 
     onAttackComplete() {
