@@ -3,20 +3,26 @@ import Random from '../utils/Random';
 import Global from '../utils/Global';
 import SoundEngine from '../utils/SoundEngine';
 import EventEngine from '../utils/EventEngine';
-import slimeImg from '../img/slime.png';
+import skeletonImg from '../img/skeleton.png';
 
 
-class Slime extends Enemy {
+class Skeleton extends Enemy {
     constructor( xPos, yPos, lvl, hp, atkSpeed, moveSpeed, strength ) {
-        super( slimeImg, 16, 16, 16, 16, true, xPos, yPos, hp, lvl, atkSpeed, moveSpeed, strength );
+        super( skeletonImg, 32, 32, 32, 32, true, xPos, yPos, hp, lvl, atkSpeed, moveSpeed, strength );
 
+        this.boundsOffsetX = 7;
+        this.boundsWidth = 16;
         this.goIdle = this.goIdle.bind(this);
-        this.addAnimation( "idle", [0], 0 );
-        this.addAnimation( "attack", [0,1], 50, false, this.goIdle );
+        this.addAnimation( "idle", [1], 0 );
+        this.addAnimation( "walkLeft", [ 3, 4, 5 ], 120, true );
+        this.addAnimation( "walkRight", [ 0, 1, 2 ], 120, true );
+        this.addAnimation( "attack", [4,5], 60, false, this.goIdle );
+        this.isAttacking = false;
     }
 
     goIdle() {
         this.playAnimation("idle");
+        this.isAttacking = false;
     }
 
     update( elapsed ) {
@@ -51,6 +57,14 @@ class Slime extends Enemy {
                 break;
             }
 
+            if( !this.isAttacking ) {
+                if( this.xVelocity < 0 || this.yVelocity > 0 ) {
+                    this.playAnimation("walkLeft");
+                }
+                else if( this.xVelocity > 0 || this.yVelocity < 0 ) {
+                    this.playAnimation("walkRight");
+                }
+            }
             super.update( elapsed );
         }
     }
@@ -124,6 +138,7 @@ class Slime extends Enemy {
     doAttack( elapsed ) {
         this.attackTimer -= elapsed;
         if( this.attackTimer <= 0 ) {
+            this.isAttacking = true;
             this.playAnimation( "attack" );
             this.attackTimer = this.mAttackSpeed;
 
@@ -139,4 +154,4 @@ class Slime extends Enemy {
     }
 }
 
-export default Slime;
+export default Skeleton;

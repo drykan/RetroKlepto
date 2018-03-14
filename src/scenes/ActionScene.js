@@ -8,19 +8,19 @@ import descendImg from '../img/descendMsg.png';
 
 // class imports
 import Chest from '../components/Chest';
-import Input from '../utils/Input';
+import EnemyFactory from '../utils/EnemyFactory';
+import EventEngine from '../utils/EventEngine';
 import Global from '../utils/Global';
 import HUD from '../components/HUD';
+import Input from '../utils/Input';
+import LootDisplay from '../components/LootDisplay';
 import MapGen from '../utils/MapGen';
 import Player from '../entities/Player';
+import Random from '../utils/Random';
 import Rectangle from '../utils/Rectangle';
 import SoundEngine from '../utils/SoundEngine';
 import Sprite from '../entities/Sprite';
 import Tilemap from '../components/Tilemap';
-import LootDisplay from '../components/LootDisplay';
-import Slime from '../entities/Slime';
-import EventEngine from '../utils/EventEngine';
-import Random from '../utils/Random';
 
 const HIT_DIST = 26;
 
@@ -61,9 +61,9 @@ class ActionScene {
         this.addLayer("map");
         this.addToLayer( "map", this.currentMap );
 
-        this.makePlayer();
         this.makeChests();
         this.makeEnemies();
+        this.makePlayer();
         //this.makeSpotlight();
         this.makeTitle();
 
@@ -142,15 +142,15 @@ class ActionScene {
         this.addLayer("enemies");
         let newEnemy = null;
         let startInfo = this.mapGenerator.getStartRoomAndPos();
-        let limit =  Random.range( this.curFloor + 2, this.curFloor + 8 );
+        let limit =  Random.range( this.curFloor + 2, this.curFloor + 6 );
         for( let i = 0; i < limit; ++i ) {
             while( startInfo.room == this.playerRoom ) {
                 startInfo = this.mapGenerator.getStartRoomAndPos();
             }
 
-            newEnemy = new Slime( startInfo.pos.x * 16, startInfo.pos.y * 16, 1, 3, 1200, 0.03, 1 );
-            this.addToLayer( "enemies", newEnemy );
+            newEnemy = EnemyFactory.getRandomEnemyWithParams( startInfo.pos.x * 16, startInfo.pos.y * 16, 1, 3, 1200, 0.03, 1 );
             this.floorEnemies.push( newEnemy );
+            this.addToLayer( "enemies", newEnemy );
             startInfo = this.mapGenerator.getStartRoomAndPos();
         }
     }
@@ -191,22 +191,22 @@ class ActionScene {
     }
 
     checkCollisions() {
+        this.floorEnemies.map( (enemy) => {
+            if( enemy.isOnScreen() && this.currentMap.collides( enemy ) ) {
+                enemy.x = enemy.lastX;
+                enemy.y = enemy.lastY;
+            }
+        });
+        
         if( this.isDescending != true ) {
             if( this.currentMap.collides( this.player ) ) {
                 this.player.x = this.player.lastX;
                 this.player.y = this.player.lastY;
             }
 
-            this.floorEnemies.map( (enemy) => {
-                if( enemy.isOnScreen() && this.currentMap.collides( enemy ) ) {
-                    enemy.x = enemy.lastX;
-                    enemy.y = enemy.lastY;
-                }
-            });
-
             this.floorEnemies.forEach( (enemy) => {
                 if( enemy.isAlive && enemy.isOnScreen() ) {
-                    if( enemy.isUnderPoint( Input.mouseClick ) && Input.mouseJustPressed( "LEFT_MOUSE" ) ) {
+                    if( enemy.isUnderPoint( Input.mouseClick ) && Input.mouseJustPressed( "LEFT_MOUSE" ) && Math.distance( this.player.midPoint, enemy.midPoint ) < 45 ) {
                         let hitChance = Math.random() * 100;
                         if( hitChance > 12 ) {
                             enemy.damage( 1 );
@@ -289,11 +289,8 @@ class ActionScene {
             this.clearLayer( "lootDisplay" );
         }
 
-        if( Input.justPressed("H") ) {
-            this.hurtPlayer(1);
-        }
-
         if( this.gameOver == true ) {
+            Global.isGameOver = true;
             if( this.mLayers[ "collection" ] == null ) {
                 this.addLayer( "collection" );
                 if( this.player.loot.length > 0 ) {
@@ -315,6 +312,15 @@ class ActionScene {
         let playerMidPt = this.player.midPoint;
         Global.playerPos.x = playerMidPt.x;
         Global.playerPos.y = playerMidPt.y;
+
+        /*
+        // remove dead enemies
+        for( let i = this.floorEnemies.length - 1; i >= 0; --i ){
+            if( this.floorEnemies[i].isAlive != true ) {
+                this.floorEnemies.splice( i, 1 );
+            }
+        }
+        */
     }
 
 
