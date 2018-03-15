@@ -49,13 +49,13 @@ class Tilemap {
             throw new Error( "Checking collision on invalid type. Type Sprite expected, got " + typeof sprite );
         }
 
-        this.colTilesOnScreen = this.getCollisionTilesOnScreen();
+        //this.colTilesOnScreen = this.getCollisionTilesOnScreen();
         let result = false;
         let bounds = sprite.bounds;
         let count = 0;
-        let limit = this.colTilesOnScreen.length;
+        let limit = this.colTiles.length;
         while( count < limit ) {
-            if( bounds.overlaps( this.colTilesOnScreen[count] ) ) {
+            if( bounds.overlaps( this.colTiles[count] ) ) {
                 result = true;
                 count = limit;
             }

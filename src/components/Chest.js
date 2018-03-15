@@ -16,19 +16,6 @@ class Chest extends Sprite {
         this.mContents = GameMgr.getGameByRarity( Random.range( 0, maxRarityLvl ) );
     }
 
-    isUnderPoint( pt ) {
-        let result = false;
-        if( this.isOnScreen() ) {
-            if( this.screenPosition.x < pt.x && this.screenPosition.x + this.fWidth > pt.x ) {
-                if( this.screenPosition.y < pt.y && this.screenPosition.y + this.fHeight > pt.y ) {
-                    result = true;
-                }
-            }
-        }
-
-        return result;
-    }
-
     open() {
         this.playAnimation( "opened" );
         this.mIsOpen = true;

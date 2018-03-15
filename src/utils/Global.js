@@ -1,5 +1,6 @@
 export default {
     game: null,
     camera: null,
-    playerPos: null
+    playerPos: null,
+    isGameOver: false
 }

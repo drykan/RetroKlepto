@@ -13,6 +13,21 @@
         "steps": {
             "file": "./audio/steps.mp3",
             "loop": false
+        },
+
+        "miss": {
+            "file": "./audio/miss.mp3",
+            "loop": false
+        },
+
+        "playerHit": {
+            "file": "./audio/playerHit.mp3",
+            "loop": false
+        },
+
+        "enemyHit": {
+            "file": "./audio/hitEnemy.mp3",
+            "loop": false
         }
     }
 }
